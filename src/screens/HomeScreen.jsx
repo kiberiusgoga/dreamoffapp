@@ -1,45 +1,54 @@
 import React from 'react';
 import { Mic, PenTool, BookOpen, Brain } from 'lucide-react';
 import Card from '../components/Card';
+import { useDreamStore } from '../hooks/useDreamStore';
+import { t } from '../utils/translations';
 
 export default function HomeScreen({ onNavigate }) {
+    const { language, currentUser } = useDreamStore();
+
     const menuItems = [
         {
             id: 'record',
-            label: 'Record Dream',
+            label: t(language, 'record'),
             icon: Mic,
-            action: () => onNavigate('add')
+            action: () => onNavigate('add', 'record') // Pass 'record' mode
         },
         {
             id: 'write',
-            label: 'Write Dream',
+            label: t(language, 'write'),
             icon: PenTool,
-            action: () => onNavigate('add')
+            action: () => onNavigate('add', 'write') // Pass 'write' mode
         },
         {
             id: 'archive',
-            label: 'Dream Archive',
+            label: t(language, 'archive'),
             icon: BookOpen,
             action: () => onNavigate('archive')
         },
         {
             id: 'models',
-            label: 'Psych. Models',
+            label: t(language, 'models'),
             icon: Brain,
-            action: () => onNavigate('add')
+            action: () => onNavigate('models') // Navigate to new Models screen
         }
     ];
 
     return (
-        <div className="flex flex-col h-full w-full justify-center py-2 px-2 overflow-hidden">
+        <div className="flex flex-col h-full w-full justify-center py-2 px-2 overflow-hidden pb-24">
 
             {/* 1. Header (Compact) */}
-            <div className="text-center space-y-1 sm:space-y-3 mb-2 flex-none">
+            <div className="text-center space-y-1 sm:space-y-3 mb-2 flex-none animate-fade-in-down">
+                {/* Welcome Message */}
+                <p className="font-serif text-gold/80 text-sm sm:text-base tracking-widest uppercase mb-1">
+                    {t(language, 'welcome') || 'WELCOME'}, {currentUser?.name ? currentUser.name.toUpperCase() : 'DREAMER'}
+                </p>
+
                 <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)] tracking-wide">
-                    DreamOff
+                    {t(language, 'appTitle')}
                 </h1>
                 <p className="font-serif italic text-gray-500 text-xs sm:text-sm lg:text-lg max-w-[90%] mx-auto leading-tight">
-                    “Dreams are the royal road to the unconscious.” — Freud
+                    {t(language, 'dailyQuote')}
                 </p>
                 {/* Desktop Divider */}
                 <div className="hidden lg:block w-32 h-[1px] bg-gradient-to-r from-transparent via-border to-transparent mx-auto mt-6 opacity-60"></div>
@@ -61,7 +70,7 @@ export default function HomeScreen({ onNavigate }) {
                    active:scale-95
                 `}
                         >
-                            <div className="p-3 sm:p-4 rounded-full bg-surfaceLight/40 border border-border/10 group-hover:bg-surfaceLight group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-4">
+                            <div className="p-3 sm:p-4 rounded-full bg-surfaceLight/40 border border-border/10 group-hover:bg-surfaceLight group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-4 flex items-center justify-center">
                                 <item.icon strokeWidth={1.5} className="w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 text-primary group-hover:text-border" />
                             </div>
                             <span className="font-serif text-sm sm:text-base lg:text-xl text-gray-300 group-hover:text-border transition-colors leading-tight">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, ArrowLeft } from 'lucide-react';
 import Card from '../components/Card';
 import { useDreamStore } from '../hooks/useDreamStore';
 
@@ -7,8 +7,18 @@ export default function ArchiveScreen({ onNavigate }) {
     const { dreams } = useDreamStore();
 
     return (
-        <div className="space-y-6 pb-20">
-            <h2 className="text-3xl font-serif mb-4">Dream Archive</h2>
+        <div className="space-y-6 pb-20 relative">
+            {/* Professional Back Arrow */}
+            <div className="absolute top-0 left-0 z-50">
+                <button
+                    onClick={() => onNavigate('home')}
+                    className="p-3 bg-surface/30 backdrop-blur-md border border-border/30 rounded-full text-gray-400 hover:text-gold hover:border-gold hover:bg-surface/50 transition-all duration-300 shadow-lg group"
+                >
+                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                </button>
+            </div>
+
+            <h2 className="text-3xl font-serif mb-4 pt-8 text-center text-primary">Dream Archive</h2>
 
             <div className="relative">
                 <Search className="absolute left-3 top-3 text-gray-500 w-5 h-5" />

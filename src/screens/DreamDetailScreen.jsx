@@ -4,11 +4,21 @@ import { useDreamStore } from '../hooks/useDreamStore';
 import Card from '../components/Card';
 
 export default function DreamDetailScreen({ dreamId, onBack }) {
-    const { getDream } = useDreamStore();
+    const { getDream, language: appLanguage } = useDreamStore();
     const dream = getDream(dreamId);
+
+    // Determine language: Prefer dream's specific language, fallback to app language
+    const lang = dream?.language || appLanguage;
+
     const [chatInput, setChatInput] = useState('');
+
+    // Localized Initial Message
+    const initialMsg = lang === 'mk'
+        ? `Го толкував овој сон користејќи ја рамката ${dream?.model}. Имате ли конкретни прашања?`
+        : `I have interpreted this dream using the ${dream?.model} framework. Do you have specific questions?`;
+
     const [messages, setMessages] = useState([
-        { role: 'ai', text: `I have interpreted this dream using the ${dream?.model} framework. Do you have specific questions?` }
+        { role: 'ai', text: initialMsg }
     ]);
 
     if (!dream) return <div>Dream not found</div>;
@@ -21,7 +31,11 @@ export default function DreamDetailScreen({ dreamId, onBack }) {
 
         // Simulate AI Reply
         setTimeout(() => {
-            setMessages(prev => [...prev, { role: 'ai', text: "That is an interesting observation. The symbol suggests a deeper layer of meaning regarding your inner self." }]);
+            const reply = lang === 'mk'
+                ? "Тоа е интересно забележување. Симболот сугерира подлабок слој на значење во врска со вашето внатрешно јас."
+                : "That is an interesting observation. The symbol suggests a deeper layer of meaning regarding your inner self.";
+
+            setMessages(prev => [...prev, { role: 'ai', text: reply }]);
         }, 1000);
     };
 
@@ -40,15 +54,74 @@ export default function DreamDetailScreen({ dreamId, onBack }) {
                 </div>
             </div>
 
-            {/* Interpretation */}
+            {/* Interpretation Section */}
             <div className="space-y-6">
                 <section>
                     <h3 className="text-accent text-sm uppercase tracking-widest mb-2 font-bold">Analysis ({dream.model})</h3>
-                    <Card className="prose prose-invert max-w-none">
-                        <p className="text-lg leading-relaxed text-gray-300">
-                            {dream.interpretation}
-                        </p>
-                    </Card>
+
+                    {/* Render Logic: Check if it's a legacy string or a modern Object */}
+                    {typeof dream.interpretation === 'string' ? (
+                        <Card className="prose prose-invert max-w-none">
+                            <p className="text-lg leading-relaxed text-gray-300">{dream.interpretation}</p>
+                        </Card>
+                    ) : (
+                        <div className="space-y-4">
+                            {/* Summary */}
+                            <Card className="text-lg text-primary/90 italic border-l-4 border-gold bg-surfaceLight/30">
+                                "{dream.interpretation.summary || dream.interpretation.overview}"
+                            </Card>
+
+                            {/* Lenses */}
+                            <div className="grid grid-cols-1 gap-4">
+                                {dream.interpretation.archetypes && (
+                                    <div className="bg-surface/50 p-4 rounded-xl border border-border/20">
+                                        <h4 className="text-gold font-serif mb-2 font-bold">Archetypal Lens</h4>
+                                        <p className="text-sm text-gray-300 leading-relaxed">{dream.interpretation.archetypes}</p>
+                                    </div>
+                                )}
+                                {dream.interpretation.scientific && (
+                                    <div className="bg-surface/50 p-4 rounded-xl border border-border/20">
+                                        <h4 className="text-gold font-serif mb-2 font-bold">Scientific Lens (APA)</h4>
+                                        <p className="text-sm text-gray-300 leading-relaxed">{dream.interpretation.scientific}</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Tablet/Desktop: Symbols Table */}
+                            {dream.interpretation.symbols && (
+                                <div className="overflow-x-auto bg-surface/50 rounded-xl border border-border/20">
+                                    <table className="w-full text-left text-sm">
+                                        <thead className="bg-surfaceLight text-gold">
+                                            <tr>
+                                                <th className="p-3">Element</th>
+                                                <th className="p-3">Meaning</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-border/10 text-gray-300">
+                                            {dream.interpretation.symbols.map((row, i) => (
+                                                <tr key={i}>
+                                                    <td className="p-3 font-bold">{row.element}</td>
+                                                    <td className="p-3 italic">{row.meaning}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+
+                            {/* Reflections */}
+                            {(dream.interpretation.reflections || dream.interpretation.actions) && (
+                                <div className="bg-surfaceLight/30 p-4 rounded-xl border border-dashed border-border/30">
+                                    <h3 className="text-gray-500 text-xs uppercase mb-2">Guidance</h3>
+                                    <ul className="list-disc list-inside text-sm text-gray-400 space-y-1">
+                                        {(dream.interpretation.reflections || dream.interpretation.actions).map((r, i) => (
+                                            <li key={i}>{r}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </section>
 
                 <section>
@@ -76,8 +149,8 @@ export default function DreamDetailScreen({ dreamId, onBack }) {
 
                     <div className="flex gap-2">
                         <input
-                            className="flex-1 bg-surface border border-border/30 rounded-lg px-3"
-                            placeholder="Ask a question..."
+                            className="flex-1 bg-surface border border-border/30 rounded-lg px-3 text-white"
+                            placeholder={lang === 'mk' ? "Постави прашање..." : "Ask a question..."}
                             value={chatInput}
                             onChange={e => setChatInput(e.target.value)}
                         />

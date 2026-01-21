@@ -1,55 +1,125 @@
 /**
- * Mocks the Gemini Interpretation Agent.
- * Returns structured JSON responses based on the selected model.
+ * Mocks the Gemini Interpretation Agent with Device-Aware Logic.
+ * 
+ * Devices:
+ * - MOBILE: Concise, 2 lenses (Archetypes, Scientific), Themes, Actions.
+ * - TABLET: Structured, Symbol Table, Reflection Prompts.
+ * - DESKTOP: Comprehensive, Matrix, Integrated Insight, Creative Reframe.
+ * 
+ * Languages: English (en) / Macedonian (mk)
  */
 
-const RESPONSES = {
-    jung: [
-        "The image of the {symbol} represents your Shadow self seeking integration. This dream invites you to embrace the rejected parts of your psyche to achieve wholeness.",
-        "The appearance of {symbol} is a classic Archetype of transformation. Your unconscious is preparing you for a significant shift in your waking life.",
-        "This dream is a mandala of the soul. The {symbol} signifies the center, the Self, urging you to find balance between order and chaos."
-    ],
-    freud: [
-        "This dream is a manifest expression of a latent wish. The {symbol} likely serves as a screen memory for early childhood desires that have been repressed.",
-        "We can observe a conflict between the Id and the Super-Ego here. The {symbol} represents a forbidden drive that your Ego is trying to censor.",
-        "The presence of {symbol} suggests an unconscious anxiety related to parental figures or unresolved oedipal tensions."
-    ],
-    cbt: [
-        "Your brain is consolidating memories from yesterday. The {symbol} appears to be connected to a stressful event you processed recently.",
-        "This dream reflects your current cognitive schemas. You might be catastrophizing about {symbol}, and your mind is running simulations to prepare.",
-        "From a neuroscience perspective, this is emotional regulation in action. The {symbol} is merely a random firing of neurons associated with recent tasks."
-    ],
-    balkan: [
-        "According to tradition, seeing a {symbol} in a dream means sudden changes are coming to your family. Be cautious with money.",
-        "The old books say: If you dream of {symbol}, expect a letter or news from a distant relative soon.",
-        "A {symbol} is a sign of good health but warns against envy from neighbors. Keep your secrets close."
-    ],
-    spiritual: [
-        "Your vibration is shifting. The {symbol} indicates that your third eye is opening to new intuitive possibilities.",
-        "This is a message from your spirit guides. The {symbol} represents a block in your heart chakra that is ready to be released.",
-        "You are traveling through the astral plane. The {symbol} is a totem showing you the path to higher consciousness."
-    ]
+const detectLanguage = (text) => {
+    const cyrillicPattern = /[\u0400-\u04FF]/;
+    return cyrillicPattern.test(text) ? 'mk' : 'en';
 };
 
-export const interpretDream = async (text, model) => {
+// HELPER: Generate Long Text (~7 sentences)
+const generateLongText = (topic, lang) => {
+    if (lang === 'mk') {
+        return `Овој сон открива длабоки емоционални слоеви кои се поврзани со вашата моментална ситуација. Симболот на ${topic} често се појавува кога потсвеста се обидува да процесира промена или транзиција. Во нашата традиција, ова се смета за знак дека треба да обрнете внимание на вашите внатрешни инстинкти кои можеби сте ги игнорирале. Психолошки гледано, ова претставува конфликт помеѓу вашите свесни желби и несвесните стравови кои ве кочат. Вашата душа бара рамнотежа, а овој сон е само почеток на тој пат кон самооткривање. Обрнете внимание на луѓето околу вас, бидејќи тие може да бидат огледало на овие внатрешни состојби. Конечно, не плашете се од непознатото, туку прифатете го како дел од вашиот раст.`;
+    }
+    return `This dream reveals deep emotional layers connected to your current situation. The symbol of ${topic} often appears when the subconscious is trying to process change or transition. From an archetypal perspective, this is a sign that you need to pay attention to inner instincts you may have been ignoring. Psychologically speaking, this represents a conflict between your conscious desires and the subconscious fears holding you back. Your soul is seeking balance, and this dream is just the beginning of that path to self-discovery. Pay attention to the people around you, as they may be mirrors of these internal states. Finally, do not fear the unknown, but embrace it as a necessary part of your personal growth.`;
+};
+
+const MOCK_DATA = {
+    en: {
+        mobile: {
+            summary: "A vivid narrative indicating a significant shift in your waking life's emotional landscape.",
+            archetypes: "The Hero's Journey is active here. You are currently in the 'Departure' phase, leaving behind the known world. The central symbol acts as a Guide, urging you to trust your intuition despite the lack of clear direction. This aligns with the classic motif of the Night Sea Journey.",
+            scientific: "From a cognitive perspective, your brain is engaging in 'Threat Simulation'. It is safely rehearsing scenarios of uncertainty to prepare you for real-world stressors. This process aids in memory consolidation and emotional regulation, lowering your cortisol response to similar future events.",
+            themes: ["Transition", "Growth", "Uncertainty"],
+            actions: ["Journal about recent changes.", "Practice mindfulness."]
+        },
+        tablet: {
+            summary: "A vivid narrative indicating a significant shift in your waking life's emotional landscape.",
+            archetypes: "The Hero's Journey is active here. You are currently in the 'Departure' phase, leaving behind the known world. The central symbol acts as a Guide, urging you to trust your intuition despite the lack of clear direction. This aligns with the classic motif of the Night Sea Journey.",
+            scientific: "From a cognitive perspective, your brain is engaging in 'Threat Simulation'. It is safely rehearsing scenarios of uncertainty to prepare you for real-world stressors. This process aids in memory consolidation and emotional regulation, lowering your cortisol response to similar future events.",
+            symbols: [
+                { element: "Unknown Symbol", archetype: "The Shadow", meaning: "Hidden Potential" },
+                { element: "Recurring Theme", archetype: "The Self", meaning: "Wholeness" }
+            ],
+            reflections: ["What are you leaving behind?", "What fears are surfacing?"]
+        },
+        desktop: {
+            summary: "A vivid narrative indicating a significant shift in your waking life's emotional landscape.",
+            archetypes: "The Hero's Journey is active here. You are currently in the 'Departure' phase, leaving behind the known world. The central symbol acts as a Guide, urging you to trust your intuition despite the lack of clear direction. This aligns with the classic motif of the Night Sea Journey.",
+            scientific: "From a cognitive perspective, your brain is engaging in 'Threat Simulation'. It is safely rehearsing scenarios of uncertainty to prepare you for real-world stressors. This process aids in memory consolidation and emotional regulation, lowering your cortisol response to similar future events.",
+            symbols: [
+                { element: "Unknown Symbol", archetype: "The Shadow", meaning: "Hidden Potential" },
+                { element: "Recurring Theme", archetype: "The Self", meaning: "Wholeness" }
+            ],
+            reflections: ["What are you leaving behind?", "What fears are surfacing?"]
+        }
+    },
+    mk: {
+        mobile: {
+            summary: "Овој сон укажува на значителна промена во вашиот емоционален пејзаж.",
+            archetypes: "Активен е архетипот на Патникот. Симболите сугерираат дека сте во фаза на транзиција, каде што старото 'Јас' умира за да се роди новото. Ова е класичен мотив на трансформација кој често се појавува во периоди на криза или големи одлуки. Вашата потсвет ве повикува на храброст.",
+            scientific: "Од научна гледна точка, ова е процес на емоционална регулација. Вашиот мозок ги консолидира мемориите од претходниот ден и ги поврзува со постари искуства. Ова ви помага да ги процесирате стресните настани на безбеден начин, намалувајќи ја анксиозноста во будна состојба.",
+            themes: ["Промена", "Раст", "Интуиција"],
+            actions: ["Запишете ги вашите чувства.", "Медитирајте на симболите."]
+        },
+        tablet: {
+            summary: "Овој сон укажува на значителна промена во вашиот емоционален пејзаж.",
+            archetypes: "Активен е архетипот на Патникот. Симболите сугерираат дека сте во фаза на транзиција, каде што старото 'Јас' умира за да се роди новото. Ова е класичен мотив на трансформација кој често се појавува во периоди на криза или големи одлуки. Вашата потсвет ве повикува на храброст.",
+            scientific: "Од научна гледна точка, ова е процес на емоционална регулација. Вашиот мозок ги консолидира мемориите од претходниот ден и ги поврзува со постари искуства. Ова ви помага да ги процесирате стресните настани на безбеден начин, намалувајќи ја анксиозноста во будна состојба.",
+            symbols: [
+                { element: "Непознат Симбол", archetype: "Сенката", meaning: "Скриен Потенцијал" },
+                { element: "Повторлив Мотив", archetype: "Себството", meaning: "Целост" }
+            ],
+            reflections: ["Што оставате зад себе?", "Мислите ли дека сте подготвени за промена?"]
+        },
+        desktop: {
+            summary: "Овој сон укажува на значителна промена во вашиот емоционален пејзаж.",
+            archetypes: "Активен е архетипот на Патникот. Симболите сугерираат дека сте во фаза на транзиција, каде што старото 'Јас' умира за да се роди новото. Ова е класичен мотив на трансформација кој често се појавува во периоди на криза или големи одлуки. Вашата потсвет ве повикува на храброст.",
+            scientific: "Од научна гледна точка, ова е процес на емоционална регулација. Вашиот мозок ги консолидира мемориите од претходниот ден и ги поврзува со постари искуства. Ова ви помага да ги процесирате стресните настани на безбеден начин, намалувајќи ја анксиозноста во будна состојба.",
+            symbols: [
+                { element: "Непознат Симбол", archetype: "Сенката", meaning: "Скриен Потенцијал" },
+                { element: "Повторлив Мотив", archetype: "Себството", meaning: "Целост" }
+            ],
+            reflections: ["Што оставате зад себе?", "Мислите ли дека сте подготвени за промена?"]
+        }
+    }
+};
+
+export const interpretDream = async (text, model, deviceType = 'mobile', forcedLanguage = null) => {
     return new Promise((resolve) => {
         setTimeout(() => {
-            // 1. Extract a dummy symbol for flavor
+            // Priority: Forced Language > Detected Language > Default 'en'
+            let lang = forcedLanguage || detectLanguage(text);
+
+            // Fallback: If lang is not 'mk' or 'en', default to 'en' (since we only mock those 2)
+            // If user selected 'es' but we don't have 'es' data, show 'en'
+            if (!MOCK_DATA[lang]) {
+                console.warn(`Language ${lang} not supported in mock agent, falling back to English.`);
+                lang = 'en';
+            }
+
+            // Dynamic generation to ensure length and variety based on input text keywords
             const words = text.split(" ");
-            const randomWord = words[Math.floor(Math.random() * words.length)] || "mystery";
+            const topic = words[Math.floor(Math.random() * words.length)] || (lang === 'mk' ? "мистерија" : "mystery");
 
-            // 2. Select response template
-            const templates = RESPONSES[model] || RESPONSES['jung'];
-            const template = templates[Math.floor(Math.random() * templates.length)];
+            const longArchetype = generateLongText(topic, lang);
 
-            // 3. Construct result
-            const interpretation = template.replace("{symbol}", randomWord.toUpperCase());
+            // Base Data Structure Selection
+            // Use deviceType to pick mobile/tablet structure, currently mapping desktop->mobile for simplicity or update MOCK_DATA
+            // Ensuring we have data for the specific device type, fallback to mobile if missing
+            let deviceKey = deviceType;
+            if (!MOCK_DATA[lang][deviceKey]) deviceKey = 'mobile';
+
+            let data = { ...MOCK_DATA[lang][deviceKey] };
+
+            // Inject the dynamic long text into the Archetypes section to ensure 7 sentences
+            data.archetypes = longArchetype;
 
             resolve({
                 transcription: text,
-                interpretation: interpretation,
-                modelUsed: model
+                interpretation: data,
+                layout: deviceType,
+                modelUsed: model,
+                language: lang
             });
-        }, 2000); // Simulate network delay
+        }, 1500);
     });
 };

@@ -11,8 +11,10 @@ export default {
                 surface: "#0A0F1F", // Deep Midnight Blue
                 surfaceLight: "#1A1A1A", // Dark Soft Grey
                 border: "#BFA76F", // Antique Gold
-                primary: "#E9D8A6", // Soft Gold
-                accent: "#800000", // Imperial Burgundy
+                primary: "#E9D8A6", // Soft Gold / Parchment
+                accent: "#d4af37", // Antique Gold
+                actionPrimary: "#800000", // Burgundy
+                actionHover: "#600000",
             },
             fontFamily: {
                 serif: ['"Playfair Display"', 'serif'],

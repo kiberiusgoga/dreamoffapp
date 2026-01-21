@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Mic, Send, Loader2 } from 'lucide-react';
+import { Mic, Send, Loader2, ArrowLeft, ChevronDown, Check } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import { interpretDream } from '../services/interpretationAgent';
@@ -14,13 +14,15 @@ const MODELS = [
     { id: 'spiritual', name: 'Spiritual / New Age' }
 ];
 
-export default function AddDreamScreen({ onNavigate }) {
+export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
+    // initialMode passed from App.jsx: 'record' or 'write'
     const [text, setText] = useState('');
     const [isRecording, setIsRecording] = useState(false);
     const [selectedModel, setSelectedModel] = useState('jung');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false); // State for custom dropdown
 
-    const { addDream } = useDreamStore();
+    const { addDream, language } = useDreamStore();
     const recognitionRef = useRef(null);
 
     const toggleRecording = () => {
@@ -35,7 +37,7 @@ export default function AddDreamScreen({ onNavigate }) {
             const recognition = new window.webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
-            recognition.lang = 'en-US'; // Defaulting to English, could be dynamic
+            recognition.lang = language === 'mk' ? 'mk-MK' : 'en-US';
 
             recognition.onresult = (event) => {
                 let final = '';
@@ -51,20 +53,29 @@ export default function AddDreamScreen({ onNavigate }) {
         }
     };
 
+    const getDeviceType = () => {
+        const width = window.innerWidth;
+        if (width < 640) return 'mobile';
+        if (width < 1024) return 'tablet';
+        return 'desktop';
+    };
+
     const handleInterpret = async () => {
         if (!text.trim()) return;
         setIsProcessing(true);
+        const deviceType = getDeviceType();
 
         try {
-            // Parallel Execution of Agents
             const [interpResult, imageUrl] = await Promise.all([
-                interpretDream(text, selectedModel),
+                interpretDream(text, selectedModel, deviceType, language),
                 generateDreamImage(text)
             ]);
 
             const newDream = addDream({
                 text,
                 model: selectedModel,
+                layout: deviceType,
+                language: language,
                 transcription: interpResult.transcription,
                 interpretation: interpResult.interpretation,
                 imageUrl: imageUrl
@@ -72,6 +83,7 @@ export default function AddDreamScreen({ onNavigate }) {
 
             onNavigate('detail', newDream.id);
         } catch (e) {
+            console.error(e);
             alert("Failed to process dream.");
         } finally {
             setIsProcessing(false);
@@ -88,43 +100,103 @@ export default function AddDreamScreen({ onNavigate }) {
     }
 
     return (
-        <div className="flex flex-col space-y-6 pb-20">
-            <h2 className="text-3xl font-serif text-center text-primary">Record Dream</h2>
-
-            {/* Mic Button */}
-            <div className="flex justify-center">
+        <div className="flex flex-col space-y-6 pb-24 relative px-4 pt-4 min-h-full">
+            {/* Professional Back Arrow */}
+            <div className="absolute top-2 left-2 z-50">
                 <button
-                    onClick={toggleRecording}
-                    className={`w-20 h-20 rounded-full flex items-center justify-center border-2 border-border shadow-glow transition-all ${isRecording ? 'bg-accent animate-pulse' : 'bg-surface'}`}
+                    onClick={() => onNavigate('home')}
+                    className="p-3 bg-surface/30 backdrop-blur-md border border-border/30 rounded-full text-gray-400 hover:text-gold hover:border-gold hover:bg-surface/50 transition-all duration-300 shadow-lg group"
                 >
-                    <Mic className={`w-8 h-8 ${isRecording ? 'text-white' : 'text-primary'}`} />
+                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                 </button>
             </div>
 
-            {/* Editor */}
-            <Card className="flex-1 min-h-[200px] flex flex-col">
-                <textarea
-                    className="w-full h-full bg-transparent border-none resize-none focus:ring-0 text-lg placeholder-gray-600 font-serif"
-                    placeholder="Describe your dream here..."
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                />
-            </Card>
+            <h2 className="text-3xl font-serif text-center text-primary pt-8">
+                {initialMode === 'record' ? (language === 'mk' ? 'Сними Сон' : 'Record Dream') : (language === 'mk' ? 'Запиши Сон' : 'Write Dream')}
+            </h2>
 
-            {/* Models */}
-            <div className="space-y-2">
-                <label className="text-sm text-gray-400 uppercase tracking-widest pl-1">Interpretation Model</label>
-                <select
-                    value={selectedModel}
-                    onChange={(e) => setSelectedModel(e.target.value)}
-                    className="w-full bg-surface border border-border/50 rounded-lg p-3 text-primary appearance-none focus:border-border"
+            {/* CONDITIONAL UI */}
+
+            {/* RECORD MODE: Show Mic, Hide Textarea initially */}
+            {initialMode === 'record' && (
+                <div className="flex flex-col items-center justify-center flex-1 space-y-8 animate-fade-in">
+                    <button
+                        onClick={toggleRecording}
+                        className={`w-40 h-40 rounded-full flex items-center justify-center border-4 border-border shadow-glow transition-all mb-4 ${isRecording ? 'bg-accent animate-pulse scale-110' : 'bg-surface hover:scale-105'}`}
+                    >
+                        <Mic className={`w-16 h-16 ${isRecording ? 'text-white' : 'text-primary'}`} />
+                    </button>
+                    <p className="text-gray-400 font-serif italic text-lg opacity-80">
+                        {isRecording
+                            ? (language === 'mk' ? 'Слушам...' : 'Listening...')
+                            : (language === 'mk' ? 'Допрете за да зборувате' : 'Tap to speak')}
+                    </p>
+
+                    {/* Show preview only if text exists */}
+                    {text && (
+                        <div className="w-full bg-surface/50 p-4 rounded-xl border border-border/30 max-h-40 overflow-y-auto animate-slide-up">
+                            <p className="text-gray-300 italic">"{text}"</p>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* WRITE MODE: Show Textarea, Hide Mic */}
+            {initialMode === 'write' && (
+                <Card className="flex-1 min-h-[300px] flex flex-col animate-fade-in">
+                    <textarea
+                        className="w-full h-full bg-transparent border-none resize-none focus:ring-0 text-lg placeholder-gray-600 font-serif p-2"
+                        placeholder={language === 'mk' ? "Опишете го вашиот сон..." : "Describe your dream here..."}
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        autoFocus
+                    />
+                </Card>
+            )}
+
+            {/* Models Selector - CUSTOM DROPDOWN */}
+            <div className="space-y-2 relative z-40">
+                <label className="text-xs text-gray-500 uppercase tracking-widest pl-1 font-bold">
+                    {language === 'mk' ? 'Модел на Толкување' : 'Interpretation Model'}
+                </label>
+
+                {/* Custom Trigger Button */}
+                <button
+                    onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
+                    className={`w-full bg-surface border ${isModelDropdownOpen ? 'border-gold' : 'border-border/50'} rounded-lg p-3 text-primary flex items-center justify-between hover:bg-surfaceLight/10 transition-all duration-300 shadow-sm`}
                 >
-                    {MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                </select>
+                    <span className="font-serif text-lg">
+                        {MODELS.find(m => m.id === selectedModel)?.name}
+                    </span>
+                    <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isModelDropdownOpen ? 'rotate-180 text-gold' : ''}`} />
+                </button>
+
+                {/* Dropdown Options List */}
+                {isModelDropdownOpen && (
+                    <div className="absolute bottom-full left-0 w-full mb-2 bg-surface/95 backdrop-blur-xl border border-gold/30 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.5)] animate-slide-up z-50">
+                        {MODELS.map(m => (
+                            <button
+                                key={m.id}
+                                onClick={() => {
+                                    setSelectedModel(m.id);
+                                    setIsModelDropdownOpen(false);
+                                }}
+                                className={`w-full p-4 flex items-center justify-between text-left transition-colors font-serif ${selectedModel === m.id
+                                    ? 'bg-gold/20 text-gold'
+                                    : 'text-gray-300 hover:bg-surfaceLight hover:text-gray-100'
+                                    }`}
+                            >
+                                <span>{m.name}</span>
+                                {selectedModel === m.id && <Check className="w-4 h-4 text-gold" />}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
-            <Button onClick={handleInterpret} disabled={!text}>
-                Interpret Dream <Send className="w-4 h-4 ml-2" />
+            {/* Submit Button - Available in Both Modes */}
+            <Button onClick={handleInterpret} disabled={!text} variant="action" className="w-full py-4 text-lg shadow-lg">
+                {language === 'mk' ? 'Толкувај' : 'Interpret Dream'} <Send className="w-5 h-5 ml-2" />
             </Button>
         </div>
     );
