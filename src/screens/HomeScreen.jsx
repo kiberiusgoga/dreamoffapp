@@ -3,6 +3,7 @@ import { Mic, PenTool, BookOpen, Brain } from 'lucide-react';
 import Card from '../components/Card';
 import { useDreamStore } from '../hooks/useDreamStore';
 import { t } from '../utils/translations';
+import AdBanner from '../components/AdBanner';
 
 export default function HomeScreen({ onNavigate }) {
     const { language, currentUser } = useDreamStore();
@@ -53,6 +54,9 @@ export default function HomeScreen({ onNavigate }) {
                 {/* Desktop Divider */}
                 <div className="hidden lg:block w-32 h-[1px] bg-gradient-to-r from-transparent via-border to-transparent mx-auto mt-6 opacity-60"></div>
             </div>
+
+            {/* 1.5 Ad Placeholder Section */}
+            <AdBanner />
 
             {/* 2. Grid Container - Flex Grow to fill space without scrolling */}
             <div className="flex-1 w-full max-w-screen-xl mx-auto flex flex-col justify-center min-h-0">

@@ -5,6 +5,7 @@ import Card from '../components/Card';
 import { interpretDream } from '../services/interpretationAgent';
 import { generateDreamImage } from '../services/imageAgent';
 import { useDreamStore } from '../hooks/useDreamStore';
+import VideoAdModal from '../components/VideoAdModal';
 
 const MODELS = [
     { id: 'jung', name: 'Jungian Archetypes' },
@@ -20,6 +21,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
     const [isRecording, setIsRecording] = useState(false);
     const [selectedModel, setSelectedModel] = useState('jung');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [showAd, setShowAd] = useState(false);
     const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false); // State for custom dropdown
 
     const { addDream, language } = useDreamStore();
@@ -62,7 +64,9 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
 
     const handleInterpret = async () => {
         if (!text.trim()) return;
-        setIsProcessing(true);
+        setShowAd(false); // Close ad
+        setIsProcessing(true); // Start processing
+
         const deviceType = getDeviceType();
 
         try {
@@ -89,6 +93,10 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
             setIsProcessing(false);
         }
     };
+
+    if (showAd) {
+        return <VideoAdModal onComplete={handleInterpret} />;
+    }
 
     if (isProcessing) {
         return (
@@ -195,7 +203,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
             </div>
 
             {/* Submit Button - Available in Both Modes */}
-            <Button onClick={handleInterpret} disabled={!text} variant="action" className="w-full py-4 text-lg shadow-lg">
+            <Button onClick={() => setShowAd(true)} disabled={!text} variant="action" className="w-full py-4 text-lg shadow-lg">
                 {language === 'mk' ? 'Толкувај' : 'Interpret Dream'} <Send className="w-5 h-5 ml-2" />
             </Button>
         </div>
