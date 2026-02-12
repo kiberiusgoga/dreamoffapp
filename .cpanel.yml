@@ -1,4 +1,3 @@
 deployment:
   tasks:
-    - export DEPLOYMENT_PATH=/home/kibeygmy/dreamoff.kiberius.com
     - /bin/cp -R * $DEPLOYMENT_PATH
