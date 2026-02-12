@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/kibeygmy/dreamoff.kiberius.com
+    - /bin/cp -R * $DEPLOYPATH
