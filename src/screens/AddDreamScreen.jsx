@@ -151,15 +151,17 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
 
             {/* WRITE MODE: Show Textarea, Hide Mic */}
             {initialMode === 'write' && (
-                <Card className="flex-1 min-h-[300px] flex flex-col animate-fade-in">
-                    <textarea
-                        className="w-full h-full bg-transparent border-none resize-none focus:ring-0 text-lg placeholder-gray-600 font-serif p-2"
-                        placeholder={language === 'mk' ? "Опишете го вашиот сон..." : "Describe your dream here..."}
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        autoFocus
-                    />
-                </Card>
+                <div className="flex-1 min-h-[300px] flex flex-col">
+                    <Card className="flex-1 flex flex-col animate-fade-in">
+                        <textarea
+                            className="w-full h-full bg-transparent border-none resize-none focus:ring-0 text-lg placeholder-gray-600 font-serif p-2 min-h-full"
+                            placeholder={language === 'mk' ? "Опишете го вашиот сон..." : "Describe your dream here..."}
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            autoFocus
+                        />
+                    </Card>
+                </div>
             )}
 
             {/* Models Selector - CUSTOM DROPDOWN */}
@@ -181,7 +183,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
 
                 {/* Dropdown Options List */}
                 {isModelDropdownOpen && (
-                    <div className="absolute bottom-full left-0 w-full mb-2 bg-surface/95 backdrop-blur-xl border border-gold/30 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.5)] animate-slide-up z-50">
+                    <div className="absolute top-full left-0 w-full mt-2 bg-surface/95 backdrop-blur-xl border border-gold/30 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.5)] animate-slide-up z-50">
                         {MODELS.map(m => (
                             <button
                                 key={m.id}

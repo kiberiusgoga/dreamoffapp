@@ -16,7 +16,7 @@ export default function Card({ children, className, onClick, active }) {
             {/* Subtle Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/30 pointer-events-none" />
 
-            <div className="relative z-10">
+            <div className="relative z-10 h-full flex flex-col">
                 {children}
             </div>
         </div>
