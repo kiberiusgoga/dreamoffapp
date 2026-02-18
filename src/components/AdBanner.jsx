@@ -1,12 +1,11 @@
-import React from 'react';
 import { ExternalLink } from 'lucide-react';
 
 export default function AdBanner() {
     return (
-        <div className="w-full max-w-screen-lg mx-auto px-4 mb-6 animate-fade-in">
-            <div className="relative group overflow-hidden rounded-[20px] bg-[#161b22]/40 border border-amber-900/20 backdrop-blur-xl">
+        <div className="w-full mb-3 animate-fade-in">
+            <div className="relative group overflow-hidden rounded-[16px] bg-[#161b22]/40 border border-amber-900/20 backdrop-blur-xl">
                 {/* Visual Placeholder Content */}
-                <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="px-4 py-3 flex flex-row items-center justify-between gap-3">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-amber-900/10 rounded-xl flex items-center justify-center border border-amber-900/20">
                             <span className="text-[10px] font-bold text-amber-500/50 uppercase tracking-tighter">AD</span>

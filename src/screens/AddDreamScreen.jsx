@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Mic, Send, Loader2, ArrowLeft, ChevronDown, Check } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -108,18 +108,17 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
     }
 
     return (
-        <div className="flex flex-col space-y-6 pb-24 relative px-4 pt-4 min-h-full">
-            {/* Professional Back Arrow */}
-            <div className="absolute top-2 left-2 z-50">
-                <button
-                    onClick={() => onNavigate('home')}
-                    className="p-3 bg-surface/30 backdrop-blur-md border border-border/30 rounded-full text-gray-400 hover:text-gold hover:border-gold hover:bg-surface/50 transition-all duration-300 shadow-lg group"
-                >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                </button>
-            </div>
+        <div className="flex flex-col space-y-6 px-4 pt-4 min-h-full">
+            {/* Back button — professional pill */}
+            <button
+                onClick={() => onNavigate('home')}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-surface/60 backdrop-blur-sm border border-border/20 rounded-xl text-sm text-gray-400 hover:text-primary hover:border-border/40 hover:bg-surface/80 transition-all duration-200 group self-start"
+            >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" />
+                <span className="font-medium">Back</span>
+            </button>
 
-            <h2 className="text-3xl font-serif text-center text-primary pt-8">
+            <h2 className="text-3xl font-serif text-center text-primary">
                 {initialMode === 'record' ? (language === 'mk' ? 'Сними Сон' : 'Record Dream') : (language === 'mk' ? 'Запиши Сон' : 'Write Dream')}
             </h2>
 
@@ -130,9 +129,9 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
                 <div className="flex flex-col items-center justify-center flex-1 space-y-8 animate-fade-in">
                     <button
                         onClick={toggleRecording}
-                        className={`w-40 h-40 rounded-full flex items-center justify-center border-4 border-border shadow-glow transition-all mb-4 ${isRecording ? 'bg-accent animate-pulse scale-110' : 'bg-surface hover:scale-105'}`}
+                        className={`w-40 h-40 sm:w-52 sm:h-52 rounded-full flex items-center justify-center border-4 border-border shadow-glow transition-all mb-4 ${isRecording ? 'bg-accent animate-pulse scale-110' : 'bg-surface hover:scale-105'}`}
                     >
-                        <Mic className={`w-16 h-16 ${isRecording ? 'text-white' : 'text-primary'}`} />
+                        <Mic className={`w-16 h-16 sm:w-20 sm:h-20 ${isRecording ? 'text-white' : 'text-primary'}`} />
                     </button>
                     <p className="text-gray-400 font-serif italic text-lg opacity-80">
                         {isRecording

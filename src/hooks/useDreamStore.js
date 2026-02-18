@@ -1,48 +1,49 @@
 import { useSyncExternalStore } from 'react';
+import { apiRegister, apiLogin, apiGetMe, removeToken, getToken } from '../services/authApi';
 
-// 1. The Global State (Singleton)
+// ============================================================
+// 1. Global State (Singleton)
+// ============================================================
 const STORAGE_KEY = 'dream_diary_v1';
 
-// Initial Load
 let memoryState = {
     dreams: [],
-    users: [], // Array of user objects { email, password, name }
-    currentUser: null, // The currently logged in user
+    currentUser: null,   // Set after token validation
+    authLoading: true,   // True until initial token check completes
     language: 'en'
 };
 
+// Load persisted dreams and language only (NOT users/auth)
 try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-        memoryState = JSON.parse(stored);
-        // Reset currentUser on load if persistence is disabled (default behavior requested by user earlier)
-        // But for "Real" auth, we usually keep them logged in. 
-        // User explicitly asked to NOT be logged in on refresh earlier. 
-        // So we will keep currentUser as null initially unless we want to persist session separately.
-        // Let's ensure structure integrity:
-        if (!memoryState.users) memoryState.users = [];
-        memoryState.currentUser = null; // Enforce login on refresh
+        const parsed = JSON.parse(stored);
+        if (parsed.dreams) memoryState.dreams = parsed.dreams;
+        if (parsed.language) memoryState.language = parsed.language;
     }
 } catch (e) {
-    console.error("Failed to load store", e);
+    console.error('Failed to load store', e);
 }
 
-// Ensure defaults if loaded state is partial
-if (!memoryState.dreams) memoryState.dreams = [];
-if (!memoryState.language) memoryState.language = 'en';
-if (!memoryState.users) memoryState.users = [];
-
-
+// ============================================================
 // 2. Listeners
+// ============================================================
 const listeners = new Set();
 const subscribe = (listener) => {
     listeners.add(listener);
     return () => listeners.delete(listener);
 };
 
+// ============================================================
 // 3. Actions
+// ============================================================
+
+// Persist only dreams and language — auth is handled by JWT
 const persist = () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryState));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        dreams: memoryState.dreams,
+        language: memoryState.language
+    }));
 };
 
 const notify = () => {
@@ -58,37 +59,55 @@ const store = {
         notify();
     },
 
-    // --- AUTH ACTIONS ---
-    registerUser: (name, email, password) => {
-        // Simple validation
-        if (memoryState.users.find(u => u.email === email)) {
-            return { success: false, error: "User already exists" };
-        }
-        const newUser = { name, email, password };
-        memoryState = {
-            ...memoryState,
-            users: [...memoryState.users, newUser],
-            currentUser: newUser
-        };
-        notify();
-        return { success: true };
-    },
+    // ── Auth actions (async, calling backend API) ──
 
-    loginUser: (email, password) => {
-        const user = memoryState.users.find(u => u.email === email && u.password === password);
-        if (user) {
+    registerUser: async (name, email, password) => {
+        try {
+            const user = await apiRegister(name, email, password);
             memoryState = { ...memoryState, currentUser: user };
             notify();
             return { success: true };
+        } catch (err) {
+            return { success: false, error: err.message };
         }
-        return { success: false, error: "Invalid credentials" };
+    },
+
+    loginUser: async (email, password) => {
+        try {
+            const user = await apiLogin(email, password);
+            memoryState = { ...memoryState, currentUser: user };
+            notify();
+            return { success: true };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
     },
 
     logoutUser: () => {
+        removeToken();
         memoryState = { ...memoryState, currentUser: null };
         notify();
     },
-    // --------------------
+
+    // Validate JWT on app mount — keeps user logged in across refresh
+    checkAuth: async () => {
+        const token = getToken();
+        if (!token) {
+            memoryState = { ...memoryState, authLoading: false, currentUser: null };
+            listeners.forEach(l => l());
+            return;
+        }
+        try {
+            const user = await apiGetMe();
+            memoryState = { ...memoryState, currentUser: user, authLoading: false };
+        } catch {
+            removeToken();
+            memoryState = { ...memoryState, currentUser: null, authLoading: false };
+        }
+        listeners.forEach(l => l());
+    },
+
+    // ── Dream actions (unchanged, still localStorage) ──
 
     addDream: (dream) => {
         const newDream = {
@@ -116,8 +135,9 @@ const store = {
     getDream: (id) => memoryState.dreams.find(d => d.id === id)
 };
 
-
+// ============================================================
 // 4. The Hook
+// ============================================================
 export function useDreamStore() {
     const state = useSyncExternalStore(subscribe, store.getSnapshot);
 
@@ -126,12 +146,14 @@ export function useDreamStore() {
         dreams: state.dreams,
         language: state.language,
         currentUser: state.currentUser,
+        authLoading: state.authLoading,
 
         // Actions
         setLanguage: store.setLanguage,
         registerUser: store.registerUser,
         loginUser: store.loginUser,
         logoutUser: store.logoutUser,
+        checkAuth: store.checkAuth,
 
         addDream: store.addDream,
         deleteDream: store.deleteDream,

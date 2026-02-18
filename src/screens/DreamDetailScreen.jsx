@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
 import { useDreamStore } from '../hooks/useDreamStore';
 import Card from '../components/Card';
@@ -40,7 +40,7 @@ export default function DreamDetailScreen({ dreamId, onBack }) {
     };
 
     return (
-        <div className="pb-20 animate-fade-in">
+        <div className="animate-fade-in">
             {/* Header */}
             <button onClick={onBack} className="flex items-center text-gray-400 mb-4 hover:text-primary">
                 <ArrowLeft className="w-5 h-5 mr-1" /> Back
@@ -149,12 +149,13 @@ export default function DreamDetailScreen({ dreamId, onBack }) {
 
                     <div className="flex gap-2">
                         <input
-                            className="flex-1 bg-surface border border-border/30 rounded-lg px-3 text-white"
+                            className="flex-1 bg-surface border border-border/30 rounded-lg px-3 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-border/60"
                             placeholder={lang === 'mk' ? "Постави прашање..." : "Ask a question..."}
                             value={chatInput}
                             onChange={e => setChatInput(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleChat()}
                         />
-                        <button onClick={handleChat} className="p-2 bg-border rounded-lg text-black">
+                        <button onClick={handleChat} className="p-3 bg-border rounded-lg text-black hover:bg-accent transition-colors">
                             <ArrowLeft className="w-5 h-5 rotate-180" />
                         </button>
                     </div>

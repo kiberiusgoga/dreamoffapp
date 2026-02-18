@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { User, Settings, Globe, Moon, X, Check, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { User, Settings, Globe, Moon, X, Check, ArrowLeft, ArrowRight, LogOut } from 'lucide-react';
 import Card from '../components/Card';
 import { useDreamStore } from '../hooks/useDreamStore';
 import { LANGUAGES, t } from '../utils/translations';
 
 export default function ProfileScreen({ onNavigate }) {
-    const { language, setLanguage, currentUser } = useDreamStore();
+    const { language, setLanguage, currentUser, logoutUser } = useDreamStore();
     const [showLangPicker, setShowLangPicker] = useState(false);
 
     // Custom Language Picker Modal
@@ -54,22 +54,21 @@ export default function ProfileScreen({ onNavigate }) {
     );
 
     return (
-        <div className="p-4 space-y-6 pb-24 animate-fade-in relative z-10 w-full max-w-md mx-auto">
+        <div className="p-4 space-y-6 pb-24 animate-fade-in z-10 w-full max-w-md mx-auto">
 
-            {/* Professional Back Arrow */}
-            <div className="absolute top-2 left-2 z-50">
-                <button
-                    onClick={() => onNavigate && onNavigate('home')}
-                    className="p-3 bg-surface/30 backdrop-blur-md border border-border/30 rounded-full text-gray-400 hover:text-gold hover:border-gold hover:bg-surface/50 transition-all duration-300 shadow-lg group"
-                >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                </button>
-            </div>
+            {/* Back button — professional pill */}
+            <button
+                onClick={() => onNavigate && onNavigate('home')}
+                className="inline-flex items-center gap-2 px-3 py-2 bg-surface/60 backdrop-blur-sm border border-border/20 rounded-xl text-sm text-gray-400 hover:text-primary hover:border-border/40 hover:bg-surface/80 transition-all duration-200 group"
+            >
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" />
+                <span className="font-medium">Back</span>
+            </button>
 
             {showLangPicker && <LanguagePicker />}
 
             {/* Header */}
-            <div className="flex items-center space-x-4 mb-4 pt-12">
+            <div className="flex items-center space-x-4 mb-4">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-gold/20 to-purple-900/20 border-2 border-gold flex items-center justify-center shadow-glow">
                     <span className="font-serif text-4xl text-gold pt-1">
                         {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'D'}
@@ -124,6 +123,23 @@ export default function ProfileScreen({ onNavigate }) {
                         <div className="flex flex-col text-left">
                             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">{t(language, 'theme')}</span>
                             <span className="text-xl text-gray-500 font-serif">Baroque AI</span>
+                        </div>
+                    </div>
+                </Card>
+
+                {/* Logout */}
+                <Card
+                    onClick={logoutUser}
+                    className="flex items-center justify-between p-5 cursor-pointer hover:border-red-900/50 transition-colors group relative overflow-hidden"
+                >
+                    <div className="absolute inset-0 bg-red-900/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-center gap-4 relative z-10 w-full">
+                        <div className="p-3 bg-red-900/20 rounded-xl text-red-400 group-hover:scale-110 transition-transform shadow-inner">
+                            <LogOut className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col text-left flex-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Account</span>
+                            <span className="text-xl text-red-400 font-serif">Log Out</span>
                         </div>
                     </div>
                 </Card>

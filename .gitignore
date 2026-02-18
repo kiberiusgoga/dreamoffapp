@@ -124,6 +124,9 @@ Desktop.ini
 # MacOS
 .DS_Store
 
+# Server DB (auto-generated)
+server/db.json
+
 # Vite
 dist/
 dist-ssr/
