@@ -1,3 +1,6 @@
+---
 deployment:
   tasks:
-    - /bin/cp -R * $DEPLOYMENT_PATH
+    - export DEPLOYPATH=/home/$USER/dreamoffapp
+    - /bin/cp -R * $DEPLOYPATH/
+    - cd $DEPLOYPATH && npm install --production

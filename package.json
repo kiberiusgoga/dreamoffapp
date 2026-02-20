@@ -1,18 +1,23 @@
 {
-  "name": "dream-diary",
+  "name": "dreamoff",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "server/server.js",
   "scripts": {
     "dev": "vite",
-    "dev:server": "cd server && node --watch server.js",
+    "dev:server": "node --watch server/server.js",
     "build": "vite build",
-    "start": "cd server && node server.js",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "start": "node server/server.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "clsx": "^2.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "lowdb": "^7.0.1",
     "lucide-react": "^0.309.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

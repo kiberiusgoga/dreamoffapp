@@ -1,5 +1,5 @@
 // Database layer — lowdb JSON file storage
-// Users are stored in server/db.json with hashed passwords
+// db.json lives in server/ folder (writable by the app)
 
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
