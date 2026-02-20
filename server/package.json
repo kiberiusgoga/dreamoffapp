@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
+  "main": "server.js",
   "scripts": {
-    "dev": "node --watch index.js",
-    "start": "node index.js"
+    "start": "NODE_ENV=production node server.js",
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -1,12 +1,13 @@
 {
   "name": "dream-diary",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "node server/index.js",
+    "dev:server": "cd server && node --watch server.js",
     "build": "vite build",
+    "start": "cd server && node server.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
