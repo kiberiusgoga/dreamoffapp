@@ -70,7 +70,7 @@ function App() {
 
     // AUTH GUARD
     if (!isLoggedIn) {
-        return <LoginScreen onLogin={() => { }} />;
+        return <LoginScreen />;
     }
 
     return (

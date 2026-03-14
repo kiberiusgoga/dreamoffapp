@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-export default function Card({ children, className, onClick, active }) {
+interface CardProps {
+    children?: ReactNode;
+    className?: string;
+    onClick?: () => void;
+    active?: boolean;
+}
+
+export default function Card({ children, className, onClick, active }: CardProps) {
     return (
         <div
             onClick={onClick}

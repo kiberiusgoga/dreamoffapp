@@ -15,7 +15,7 @@ const MODELS = [
     { id: 'spiritual', name: 'Spiritual / New Age' }
 ];
 
-export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
+export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { onNavigate: (screen: string, params?: any) => void; initialMode?: string }) {
     // initialMode passed from App.jsx: 'record' or 'write'
     const [text, setText] = useState('');
     const [isRecording, setIsRecording] = useState(false);
@@ -36,7 +36,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
                 alert("Speech recognition not supported in this browser.");
                 return;
             }
-            const recognition = new window.webkitSpeechRecognition();
+            const recognition = new (window as any).webkitSpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = true;
             recognition.lang = language === 'mk' ? 'mk-MK' : 'en-US';
@@ -75,14 +75,14 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }) {
                 generateDreamImage(text)
             ]);
 
-            const newDream = addDream({
+            const newDream = await addDream({
                 text,
                 model: selectedModel,
                 layout: deviceType,
                 language: language,
-                transcription: interpResult.transcription,
-                interpretation: interpResult.interpretation,
-                imageUrl: imageUrl
+                transcription: (interpResult as any).transcription,
+                interpretation: (interpResult as any).interpretation,
+                imageUrl: imageUrl as string
             });
 
             onNavigate('detail', newDream.id);

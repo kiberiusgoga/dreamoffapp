@@ -3,16 +3,16 @@
 // POST /login    — validate credentials, return JWT
 // GET  /me       — return current user profile (protected)
 
-import { Router } from 'express';
-import bcrypt from 'bcryptjs';
+import { Router, Request, Response } from 'express';
+import * as bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getDB } from '../models/db.js';
+import { User } from '../models/index.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = Router();
 const SALT_ROUNDS = 10;
 
-function generateToken(user) {
+function generateToken(user: any) {
     return jwt.sign(
         { email: user.email, name: user.name },
         process.env.JWT_SECRET,
@@ -21,7 +21,7 @@ function generateToken(user) {
 }
 
 // ── Register ──
-router.post('/register', async (req, res) => {
+router.post('/register', async (req: Request, res: Response): Promise<any> => {
     try {
         const { name, email, password } = req.body;
 
@@ -36,27 +36,24 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: 'Invalid email format.' });
         }
 
-        const db = getDB();
-        const existing = db.data.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        const existing = await User.findOne({ where: { email: email.toLowerCase() } });
         if (existing) {
             return res.status(409).json({ error: 'User already exists.' });
         }
 
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-        const newUser = {
+        const userToSave = {
             email: email.toLowerCase(),
             name,
-            password: hashedPassword,
-            createdAt: new Date().toISOString()
+            password: hashedPassword
         };
 
-        db.data.users.push(newUser);
-        await db.write();
+        const dbUser = await User.create(userToSave);
 
-        const token = generateToken(newUser);
+        const token = generateToken(userToSave);
         res.status(201).json({
             token,
-            user: { email: newUser.email, name: newUser.name, createdAt: newUser.createdAt }
+            user: { email: dbUser.email, name: dbUser.name, createdAt: dbUser.createdAt }
         });
     } catch (err) {
         console.error('Register error:', err);
@@ -65,7 +62,7 @@ router.post('/register', async (req, res) => {
 });
 
 // ── Login ──
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res: Response): Promise<any> => {
     try {
         const { email, password } = req.body;
 
@@ -73,8 +70,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Email and password are required.' });
         }
 
-        const db = getDB();
-        const user = db.data.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        const user = await User.findOne({ where: { email: email.toLowerCase() } });
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials.' });
         }
@@ -96,10 +92,9 @@ router.post('/login', async (req, res) => {
 });
 
 // ── Get current user (protected) ──
-router.get('/me', authenticateToken, async (req, res) => {
+router.get('/me', authenticateToken, async (req: any, res: Response): Promise<any> => {
     try {
-        const db = getDB();
-        const user = db.data.users.find(u => u.email === req.user.email);
+        const user = await User.findOne({ where: { email: req.user.email } });
         if (!user) {
             return res.status(404).json({ error: 'User not found.' });
         }

@@ -1,6 +1,3 @@
----
 deployment:
   tasks:
- - export DEPLOYPATH=/home/kibeygym/dreamoff.kiberius.com
-    - /bin/cp -R * $DEPLOYPATH/
-    - cd $DEPLOYPATH && npm install --production
+    - /bin/cp -R * $DEPLOYMENT_PATH

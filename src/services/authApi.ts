@@ -11,7 +11,7 @@ export function getToken() {
     return localStorage.getItem(TOKEN_KEY);
 }
 
-export function setToken(token) {
+export function setToken(token: string) {
     localStorage.setItem(TOKEN_KEY, token);
 }
 
@@ -21,7 +21,7 @@ export function removeToken() {
 
 // ── Fetch helper with auto Bearer header ──
 
-async function apiFetch(url, options = {}) {
+export async function apiFetch(url: string, options: RequestInit = {}) {
     const token = getToken();
     const headers = {
         'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ async function apiFetch(url, options = {}) {
 
 // ── API functions ──
 
-export async function apiRegister(name, email, password) {
+export async function apiRegister(name: string, email: string, password: string) {
     const data = await apiFetch(`${API_BASE}/register`, {
         method: 'POST',
         body: JSON.stringify({ name, email, password }),
@@ -50,7 +50,7 @@ export async function apiRegister(name, email, password) {
     return data.user;
 }
 
-export async function apiLogin(email, password) {
+export async function apiLogin(email: string, password: string) {
     const data = await apiFetch(`${API_BASE}/login`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),

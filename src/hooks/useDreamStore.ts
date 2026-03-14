@@ -1,12 +1,21 @@
 import { useSyncExternalStore } from 'react';
 import { apiRegister, apiLogin, apiGetMe, removeToken, getToken } from '../services/authApi';
+import { fetchDreams, createDream, deleteDreamApi } from '../services/dreamsApi';
+import { Dream, User } from '../types/index';
 
 // ============================================================
 // 1. Global State (Singleton)
 // ============================================================
 const STORAGE_KEY = 'dream_diary_v1';
 
-let memoryState = {
+interface StoreState {
+    dreams: Dream[];
+    currentUser: User | null;
+    authLoading: boolean;
+    language: string;
+}
+
+let memoryState: StoreState = {
     dreams: [],
     currentUser: null,   // Set after token validation
     authLoading: true,   // True until initial token check completes
@@ -18,7 +27,6 @@ try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed.dreams) memoryState.dreams = parsed.dreams;
         if (parsed.language) memoryState.language = parsed.language;
     }
 } catch (e) {
@@ -28,8 +36,8 @@ try {
 // ============================================================
 // 2. Listeners
 // ============================================================
-const listeners = new Set();
-const subscribe = (listener) => {
+const listeners = new Set<() => void>();
+const subscribe = (listener: () => void) => {
     listeners.add(listener);
     return () => listeners.delete(listener);
 };
@@ -41,7 +49,6 @@ const subscribe = (listener) => {
 // Persist only dreams and language — auth is handled by JWT
 const persist = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        dreams: memoryState.dreams,
         language: memoryState.language
     }));
 };
@@ -54,17 +61,18 @@ const notify = () => {
 const store = {
     getSnapshot: () => memoryState,
 
-    setLanguage: (lang) => {
+    setLanguage: (lang: string) => {
         memoryState = { ...memoryState, language: lang };
         notify();
     },
 
     // ── Auth actions (async, calling backend API) ──
 
-    registerUser: async (name, email, password) => {
+    registerUser: async (name: string, email: string, password: string): Promise<{success: boolean; error?: string}> => {
         try {
             const user = await apiRegister(name, email, password);
-            memoryState = { ...memoryState, currentUser: user };
+            const dreams = await fetchDreams().catch(() => []);
+            memoryState = { ...memoryState, currentUser: user, dreams };
             notify();
             return { success: true };
         } catch (err) {
@@ -72,10 +80,11 @@ const store = {
         }
     },
 
-    loginUser: async (email, password) => {
+    loginUser: async (email: string, password: string): Promise<{success: boolean; error?: string}> => {
         try {
             const user = await apiLogin(email, password);
-            memoryState = { ...memoryState, currentUser: user };
+            const dreams = await fetchDreams().catch(() => []);
+            memoryState = { ...memoryState, currentUser: user, dreams };
             notify();
             return { success: true };
         } catch (err) {
@@ -85,7 +94,7 @@ const store = {
 
     logoutUser: () => {
         removeToken();
-        memoryState = { ...memoryState, currentUser: null };
+        memoryState = { ...memoryState, currentUser: null, dreams: [] };
         notify();
     },
 
@@ -99,40 +108,47 @@ const store = {
         }
         try {
             const user = await apiGetMe();
-            memoryState = { ...memoryState, currentUser: user, authLoading: false };
+            const dreams = await fetchDreams().catch(() => []);
+            memoryState = { ...memoryState, currentUser: user, dreams, authLoading: false };
         } catch {
             removeToken();
-            memoryState = { ...memoryState, currentUser: null, authLoading: false };
+            memoryState = { ...memoryState, currentUser: null, dreams: [], authLoading: false };
         }
         listeners.forEach(l => l());
     },
 
     // ── Dream actions (unchanged, still localStorage) ──
 
-    addDream: (dream) => {
-        const newDream = {
-            id: Date.now().toString(),
-            date: new Date().toISOString(),
-            chatHistory: [],
-            ...dream
-        };
-        memoryState = {
-            ...memoryState,
-            dreams: [newDream, ...memoryState.dreams]
-        };
-        notify();
-        return newDream;
+    addDream: async (dream: Partial<Dream>): Promise<Dream> => {
+        try {
+            const newDream = await createDream(dream);
+            memoryState = {
+                ...memoryState,
+                dreams: [newDream, ...memoryState.dreams]
+            };
+            notify();
+            return newDream;
+        } catch (err) {
+            console.error('Failed to save to DB:', err);
+            // Optional: Handle error gracefully, e.g., show a toast.
+            throw err;
+        }
     },
 
-    deleteDream: (id) => {
-        memoryState = {
-            ...memoryState,
-            dreams: memoryState.dreams.filter(d => d.id !== id)
-        };
-        notify();
+    deleteDream: async (id: string) => {
+        try {
+            await deleteDreamApi(id);
+            memoryState = {
+                ...memoryState,
+                dreams: memoryState.dreams.filter(d => d.id !== id)
+            };
+            notify();
+        } catch (err) {
+            console.error('Failed to delete from DB:', err);
+        }
     },
 
-    getDream: (id) => memoryState.dreams.find(d => d.id === id)
+    getDream: (id: string) => memoryState.dreams.find(d => d.id === id)
 };
 
 // ============================================================
