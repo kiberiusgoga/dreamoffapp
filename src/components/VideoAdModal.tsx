@@ -23,13 +23,13 @@ export default function VideoAdModal({ onComplete }: { onComplete: () => void })
             </div>
 
             {/* Video Placeholder Area */}
-            <div className="w-full h-full max-w-4xl aspect-video bg-[#0d1117] relative flex items-center justify-center group cursor-pointer">
+            <div className="w-full h-full max-w-4xl aspect-video bg-authSurfaceDeep relative flex items-center justify-center group cursor-pointer">
                 {/* Simulated Video Content */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1a1f26] to-[#0d1117] flex flex-col items-center justify-center p-8 text-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-surfaceLight to-authSurfaceDeep flex flex-col items-center justify-center p-8 text-center">
                     <div className="w-24 h-24 mb-6 rounded-3xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center animate-pulse">
                         <Play className="w-12 h-12 text-amber-500 fill-amber-500/20" />
                     </div>
-                    <h2 className="text-3xl font-serif text-[#f0e6d2] mb-3">DreamOff Premium</h2>
+                    <h2 className="text-3xl font-serif text-primary mb-3">DreamOff Premium</h2>
                     <p className="text-gray-400 max-w-md italic">Unlock deeper insights and infinite AI generations. Our most advanced models are waiting for you.</p>
                 </div>
 
@@ -66,7 +66,7 @@ export default function VideoAdModal({ onComplete }: { onComplete: () => void })
 
             {/* Branding Footer */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-500 text-[10px] uppercase tracking-[0.3em] font-medium opacity-50">
-                Powered by Google AdSense
+                DreamOff
             </div>
         </div>
     );

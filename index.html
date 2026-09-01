@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover is what makes env(safe-area-inset-*) resolve to real
+         values on notched phones; without it the bottom nav sits under the
+         home indicator. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="DreamOff — record your dreams and read them through Jungian, Freudian, cognitive and other interpretive frameworks." />
     <title>DreamOff</title>
 </head>
 

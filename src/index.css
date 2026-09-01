@@ -1,3 +1,11 @@
+/* Self-hosted so there is no third-party font request at runtime: no extra
+   connection on first paint, and no user IP handed to a font CDN. Variable
+   weights mean one file per family instead of one per weight. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/inter/wght-italic.css';
+@import '@fontsource-variable/playfair-display';
+@import '@fontsource-variable/playfair-display/wght-italic.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,6 +18,8 @@ body {
     @apply bg-background text-primary font-sans overflow-hidden;
     /* Prevent scroll bleeding on mobile */
     overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -21,14 +31,31 @@ h6 {
     @apply font-serif;
 }
 
-/* Hide scrollbar utility */
 @layer utilities {
+    /* Hide scrollbar utility */
     .no-scrollbar {
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
     .no-scrollbar::-webkit-scrollbar {
         display: none;
+    }
+
+    /* Safe-area insets for notched phones. These were used in the layout
+       before they existed, so the bottom nav sat under the home indicator on
+       iOS. env() resolves to 0 everywhere else, so they are harmless on
+       desktop. Requires viewport-fit=cover, set in index.html. */
+    .pt-safe-top {
+        padding-top: env(safe-area-inset-top, 0px);
+    }
+    .pb-safe-bottom {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .pl-safe-left {
+        padding-left: env(safe-area-inset-left, 0px);
+    }
+    .pr-safe-right {
+        padding-right: env(safe-area-inset-right, 0px);
     }
 }
 
@@ -44,4 +71,18 @@ h6 {
 ::-webkit-scrollbar-thumb {
     background: #BFA76F;
     border-radius: 4px;
+}
+
+/* Honour the OS-level request for less motion. Entrance animations become
+   instant rather than being removed, so nothing depends on an animation that
+   never runs. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

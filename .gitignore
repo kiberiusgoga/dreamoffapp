@@ -146,3 +146,6 @@ server/*.log
 
 # Generated dream images
 server/uploads/
+
+# Local frontend env (ad keys)
+.env.local

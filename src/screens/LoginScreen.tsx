@@ -3,10 +3,10 @@ import { useDreamStore } from '../hooks/useDreamStore';
 import { User, Lock, Mail, ArrowRight, Moon } from 'lucide-react';
 
 const INPUT_CLASS =
-    'w-full bg-[#0d1117]/80 border border-gray-800/80 rounded-2xl py-4 pl-12 pr-4 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-red-900/50 focus:ring-1 focus:ring-red-900/20 transition-all duration-300';
+    'w-full bg-authSurfaceDeep/80 border border-gray-800/80 rounded-2xl py-4 pl-12 pr-4 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-red-900/50 focus:ring-1 focus:ring-red-900/20 transition-all duration-300';
 
 const SOCIAL_BTN_CLASS =
-    'w-full bg-[#0d1117]/60 hover:bg-[#161b22] active:scale-[0.98] border border-gray-800/60 hover:border-gray-700 rounded-2xl py-4 px-5 flex items-center gap-3 font-medium text-gray-300 transition-all duration-300';
+    'w-full bg-authSurfaceDeep/60 hover:bg-authSurface active:scale-[0.98] border border-gray-800/60 hover:border-gray-700 rounded-2xl py-4 px-5 flex items-center gap-3 font-medium text-gray-300 transition-all duration-300';
 
 const ICON_BOX_CLASS =
     'w-9 h-9 rounded-xl bg-white/5 border border-gray-800/60 flex items-center justify-center flex-shrink-0';
@@ -50,18 +50,18 @@ export default function LoginScreen() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0d1117] px-4 font-sans text-gray-100 selection:bg-red-500/30">
-            <div className="w-full max-w-md bg-[#161b22]/40 p-8 rounded-[40px] border border-gray-800/50 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center bg-authSurfaceDeep px-4 font-sans text-gray-100 selection:bg-red-500/30">
+            <div className="w-full max-w-md bg-authSurface/40 p-8 rounded-[40px] border border-gray-800/50 backdrop-blur-xl shadow-2xl relative overflow-hidden">
 
                 {/* Ambient glow */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-900/10 blur-[80px] rounded-full pointer-events-none" />
 
                 {/* ── Header ── */}
                 <div className="flex flex-col items-center mb-10 mt-2">
-                    <div className="w-20 h-20 bg-[#161b22] rounded-[24px] flex items-center justify-center mb-8 border border-gray-700/50 shadow-xl group hover:border-amber-200/30 transition-all duration-500">
+                    <div className="w-20 h-20 bg-authSurface rounded-[24px] flex items-center justify-center mb-8 border border-gray-700/50 shadow-xl group hover:border-amber-200/30 transition-all duration-500">
                         <Moon className="w-9 h-9 text-amber-100/90 fill-amber-100/10 group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <h1 className="text-4xl font-serif text-[#f0e6d2] mb-3 tracking-tight font-medium">
+                    <h1 className="text-4xl font-serif text-primary mb-3 tracking-tight font-medium">
                         {isLogin ? 'Welcome Back' : 'Join DreamOff'}
                     </h1>
                     <p className="text-gray-500 text-[15px] italic font-light tracking-wide">
@@ -98,7 +98,7 @@ export default function LoginScreen() {
                     )}
 
                     <button type="submit" disabled={isLoading}
-                        className="w-full bg-[#8b0000] hover:bg-[#a00000] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl py-4 font-bold shadow-lg shadow-red-950/40 transition-all duration-300 flex items-center justify-center gap-3 group mt-6">
+                        className="w-full bg-actionPrimary hover:bg-actionHover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl py-4 font-bold shadow-lg shadow-red-950/40 transition-all duration-300 flex items-center justify-center gap-3 group mt-6">
                         <span className="tracking-wide">
                             {isLoading ? 'Please wait...' : (isLogin ? 'Login' : 'Create Account')}
                         </span>
@@ -112,7 +112,7 @@ export default function LoginScreen() {
                         <div className="w-full border-t border-gray-800/60" />
                     </div>
                     <div className="relative flex justify-center">
-                        <span className="bg-[#12161d] px-4 text-[10px] uppercase font-bold tracking-[0.2em] text-gray-600">
+                        <span className="bg-authSurfaceDeep px-4 text-[10px] uppercase font-bold tracking-[0.2em] text-gray-600">
                             Or continue with
                         </span>
                     </div>
