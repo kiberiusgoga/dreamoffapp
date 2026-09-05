@@ -178,8 +178,8 @@ export default function DreamDetailScreen({ dreamId, onBack }: { dreamId: string
                     </div>
 
                     {chatError && (
-                        <div role="alert" className="mb-3 bg-red-900/10 border border-red-900/30 rounded-lg p-3">
-                            <p className="text-red-400 text-xs text-center">{chatError}</p>
+                        <div role="alert" className="mb-3 bg-danger/10 border border-danger/30 rounded-lg p-3">
+                            <p className="text-danger text-xs text-center">{chatError}</p>
                         </div>
                     )}
 

@@ -10,6 +10,9 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
+    /* The design-token test reads tailwind.config.js directly, so the config
+       has to be part of the programme rather than an untyped import. */
+    "allowJs": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
@@ -20,6 +23,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "test", "vitest.config.ts", "vitest.workspace.ts"],
+  "include": ["src", "test", "vitest.config.ts", "vitest.workspace.ts", "tailwind.config.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

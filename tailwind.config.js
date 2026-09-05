@@ -15,6 +15,13 @@ export default {
                 accent: "#d4af37", // Antique Gold
                 actionPrimary: "#800000", // Burgundy
                 actionHover: "#600000",
+                // Semantic, not decorative: this is the only red in the app.
+                // It exists so "something went wrong" and "this is our brand"
+                // stop being the same hue, which is what made the auth screen
+                // read as a different product. 6.41:1 on #0d1117 — AA for the
+                // small text it carries.
+                danger: "#E0796B",
+
                 // Surfaces the auth screen used to hardcode.
                 authSurface: "#161b22",
                 authSurfaceDeep: "#0d1117",

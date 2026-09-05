@@ -131,16 +131,16 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                 {/* Logout */}
                 <Card
                     onClick={logoutUser}
-                    className="flex items-center justify-between p-5 cursor-pointer hover:border-red-900/50 transition-colors group relative overflow-hidden"
+                    className="flex items-center justify-between p-5 cursor-pointer hover:border-danger/50 transition-colors group relative overflow-hidden"
                 >
-                    <div className="absolute inset-0 bg-red-900/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-danger/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="flex items-center gap-4 relative z-10 w-full">
-                        <div className="p-3 bg-red-900/20 rounded-xl text-red-400 group-hover:scale-110 transition-transform shadow-inner">
+                        <div className="p-3 bg-danger/15 rounded-xl text-danger group-hover:scale-110 transition-transform shadow-inner">
                             <LogOut className="w-6 h-6" />
                         </div>
                         <div className="flex flex-col text-left flex-1">
                             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Account</span>
-                            <span className="text-xl text-red-400 font-serif">Log Out</span>
+                            <span className="text-xl text-danger font-serif">Log Out</span>
                         </div>
                     </div>
                 </Card>

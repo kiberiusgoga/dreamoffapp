@@ -3,7 +3,7 @@ import { useDreamStore } from '../hooks/useDreamStore';
 import { User, Lock, Mail, ArrowRight, Moon } from 'lucide-react';
 
 const INPUT_CLASS =
-    'w-full bg-authSurfaceDeep/80 border border-gray-800/80 rounded-2xl py-4 pl-12 pr-4 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-red-900/50 focus:ring-1 focus:ring-red-900/20 transition-all duration-300';
+    'w-full bg-authSurfaceDeep/80 border border-gray-800/80 rounded-2xl py-4 pl-12 pr-4 text-gray-200 placeholder-gray-600 focus:outline-none focus:border-border/50 focus:ring-1 focus:ring-border/20 transition-all duration-300';
 
 const SOCIAL_BTN_CLASS =
     'w-full bg-authSurfaceDeep/60 hover:bg-authSurface active:scale-[0.98] border border-gray-800/60 hover:border-gray-700 rounded-2xl py-4 px-5 flex items-center gap-3 font-medium text-gray-300 transition-all duration-300';
@@ -50,11 +50,11 @@ export default function LoginScreen() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-authSurfaceDeep px-4 font-sans text-gray-100 selection:bg-red-500/30">
+        <div className="min-h-screen flex items-center justify-center bg-authSurfaceDeep px-4 font-sans text-gray-100 selection:bg-accent/30">
             <div className="w-full max-w-md bg-authSurface/40 p-8 rounded-[40px] border border-gray-800/50 backdrop-blur-xl shadow-2xl relative overflow-hidden">
 
                 {/* Ambient glow */}
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-red-900/10 blur-[80px] rounded-full pointer-events-none" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-accent/10 blur-[80px] rounded-full pointer-events-none" />
 
                 {/* ── Header ── */}
                 <div className="flex flex-col items-center mb-10 mt-2">
@@ -73,32 +73,32 @@ export default function LoginScreen() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {!isLogin && (
                         <div className="relative group">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-red-400 transition-colors duration-300" />
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-accent transition-colors duration-300" />
                             <input type="text" placeholder="Your Name" value={name}
                                 onChange={(e) => setName(e.target.value)} className={INPUT_CLASS} />
                         </div>
                     )}
 
                     <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-red-400 transition-colors duration-300" />
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-accent transition-colors duration-300" />
                         <input type="email" placeholder="Email Address" value={email}
                             onChange={(e) => setEmail(e.target.value)} className={INPUT_CLASS} />
                     </div>
 
                     <div className="relative group">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-red-400 transition-colors duration-300" />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-accent transition-colors duration-300" />
                         <input type="password" placeholder="Password" value={password}
                             onChange={(e) => setPassword(e.target.value)} className={INPUT_CLASS} />
                     </div>
 
                     {error && (
-                        <div className="bg-red-900/10 border border-red-900/30 rounded-xl p-3">
-                            <p className="text-red-400 text-sm text-center font-medium">{error}</p>
+                        <div className="bg-danger/10 border border-danger/30 rounded-xl p-3">
+                            <p className="text-danger text-sm text-center font-medium">{error}</p>
                         </div>
                     )}
 
                     <button type="submit" disabled={isLoading}
-                        className="w-full bg-actionPrimary hover:bg-actionHover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl py-4 font-bold shadow-lg shadow-red-950/40 transition-all duration-300 flex items-center justify-center gap-3 group mt-6">
+                        className="w-full bg-actionPrimary hover:bg-actionHover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl py-4 font-bold shadow-lg shadow-actionPrimary/40 transition-all duration-300 flex items-center justify-center gap-3 group mt-6">
                         <span className="tracking-wide">
                             {isLoading ? 'Please wait...' : (isLogin ? 'Login' : 'Create Account')}
                         </span>
@@ -153,7 +153,7 @@ export default function LoginScreen() {
                     <p className="text-gray-500 text-sm">
                         {isLogin ? "Don't have an account?" : 'Already have an account?'}
                         <button onClick={() => { setIsLogin(!isLogin); setError(''); }}
-                            className="ml-2 text-red-500 hover:text-red-400 font-semibold transition-colors duration-300 hover:underline underline-offset-4">
+                            className="ml-2 text-accent hover:text-primary font-semibold transition-colors duration-300 hover:underline underline-offset-4">
                             {isLogin ? 'Sign up' : 'Login'}
                         </button>
                     </p>
