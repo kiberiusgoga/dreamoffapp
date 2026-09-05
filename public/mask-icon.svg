@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <title>DreamOff</title>
+    <defs>
+        <mask id="crescent">
+            <rect width="64" height="64" fill="black" />
+            <circle cx="33.5" cy="31" r="23.5" fill="white" />
+            <circle cx="48.5" cy="16" r="19.5" fill="black" />
+        </mask>
+    </defs>
+    <rect width="64" height="64" fill="black" mask="url(#crescent)" />
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="DreamOff">
+    <title>DreamOff</title>
+    <defs>
+        <linearGradient id="gold" x1="16" y1="12" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#F3E6BE" />
+            <stop offset="0.55" stop-color="#E9D8A6" />
+            <stop offset="1" stop-color="#BFA76F" />
+        </linearGradient>
+        <linearGradient id="night" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#141B33" />
+            <stop offset="1" stop-color="#05070F" />
+        </linearGradient>
+        <mask id="crescent">
+            <rect width="64" height="64" fill="black" />
+            <circle cx="33.5" cy="31" r="23.5" fill="white" />
+            <circle cx="48.5" cy="16" r="19.5" fill="black" />
+        </mask>
+    </defs>
+    <rect width="64" height="64" rx="15" fill="url(#night)" />
+    <rect width="64" height="64" fill="url(#gold)" mask="url(#crescent)" />
+</svg>

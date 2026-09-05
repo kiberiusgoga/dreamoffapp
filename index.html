@@ -3,7 +3,14 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- .ico first for the crawlers and readers that fetch /favicon.ico by
+         path; the SVG wins in every browser that understands it and stays
+         sharp at any density. -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/mask-icon.svg" color="#BFA76F" />
+    <link rel="manifest" href="/site.webmanifest" />
     <!-- viewport-fit=cover is what makes env(safe-area-inset-*) resolve to real
          values on notched phones; without it the bottom nav sits under the
          home indicator. -->
