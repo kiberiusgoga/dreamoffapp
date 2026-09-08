@@ -6,6 +6,7 @@
 // ~30 MB JSON response. Images now live on disk; the row keeps only a path.
 
 import { randomUUID } from 'node:crypto';
+import { logger } from './logger.js';
 import { mkdir, writeFile, unlink } from 'node:fs/promises';
 import { join, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -59,7 +60,7 @@ export async function deleteImage(publicPath: string | null | undefined): Promis
     } catch (err) {
         const code = (err as NodeJS.ErrnoException)?.code;
         if (code !== 'ENOENT') {
-            console.warn(`[DreamOff] Could not delete image ${filename}:`, err);
+            logger.warn('could not delete image', { filename, err });
         }
     }
 }

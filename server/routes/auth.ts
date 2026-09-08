@@ -4,6 +4,7 @@
 // GET  /me       — return current user profile (protected)
 
 import { Router, Request, Response } from 'express';
+import { logger } from '../logger.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User, Dream } from '../models/index.js';
@@ -59,7 +60,7 @@ router.post('/register', authLimiter, async (req: Request, res: Response) => {
             user: { email: dbUser.email, name: dbUser.name, createdAt: dbUser.createdAt }
         });
     } catch (err) {
-        console.error('Register error:', err);
+        logger.error('registration failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error.' });
     }
 });
@@ -89,7 +90,7 @@ router.post('/login', authLimiter, async (req: Request, res: Response) => {
             user: { email: user.email, name: user.name, createdAt: user.createdAt }
         });
     } catch (err) {
-        console.error('Login error:', err);
+        logger.error('login failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error.' });
     }
 });
@@ -105,7 +106,7 @@ router.get('/me', authenticateToken, async (req: Request, res: Response) => {
             user: { email: user.email, name: user.name, createdAt: user.createdAt }
         });
     } catch (err) {
-        console.error('Me error:', err);
+        logger.error('profile lookup failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error.' });
     }
 });
@@ -154,7 +155,7 @@ router.get('/me/export', authenticateToken, async (req: Request, res: Response) 
             }))
         });
     } catch (err) {
-        console.error('Export error:', err);
+        logger.error('data export failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error.' });
     }
 });
@@ -190,10 +191,10 @@ router.delete('/me', authenticateToken, authLimiter, async (req: Request, res: R
         const removed = await Dream.destroy({ where: { userId: user.id } });
         await user.destroy();
 
-        console.log(`[DreamOff] Account deleted, ${removed} dream(s) removed`);
+        logger.info('account deleted', { requestId: req.id, userId: user.id, dreamsDeleted: removed });
         res.json({ success: true, dreamsDeleted: removed });
     } catch (err) {
-        console.error('Delete account error:', err);
+        logger.error('account deletion failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error.' });
     }
 });

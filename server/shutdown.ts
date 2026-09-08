@@ -13,7 +13,7 @@ export interface ShutdownDeps {
     graceMs: number;
     /** Injected so a test does not have to end the test runner's process. */
     exit: (code: number) => void;
-    log?: Pick<Console, 'log' | 'warn' | 'error'>;
+    log?: { log: (m: string) => void; warn: (m: string) => void; error: (m: string, err?: unknown) => void };
 }
 
 export function createShutdown(deps: ShutdownDeps) {

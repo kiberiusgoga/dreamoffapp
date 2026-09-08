@@ -1,4 +1,5 @@
 import { Sequelize } from 'sequelize';
+import { logger } from '../logger.js';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -15,10 +16,10 @@ const sequelize = new Sequelize({
 export async function initDB() {
     try {
         await sequelize.authenticate();
-        console.log(`[DreamOff] SQLite connected successfully`);
+        logger.info('database connected', { dialect: 'sqlite', path: dbPath });
         // Note: we will call sync after importing all models
     } catch (err) {
-        console.error(`[DreamOff] SQLite connection error:`, err);
+        logger.error('database connection failed', { err, path: dbPath });
         process.exit(1);
     }
 }

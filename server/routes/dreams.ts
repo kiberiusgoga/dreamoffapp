@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { logger } from '../logger.js';
 import Dream from '../models/Dream.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { deleteImage } from '../storage.js';
@@ -60,7 +61,7 @@ router.get('/', async (req: Request, res: Response) => {
 
         res.json(dreams.map(serialize));
     } catch (err) {
-        console.error('Fetch dreams error:', err);
+        logger.error('listing dreams failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -77,7 +78,7 @@ router.post('/', async (req: Request, res: Response) => {
 
         res.status(201).json(serialize(newDream));
     } catch (err) {
-        console.error('Add dream error:', err);
+        logger.error('creating a dream failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -102,7 +103,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
         res.json({ success: true, id: req.params.id });
     } catch (err) {
-        console.error('Delete dream error:', err);
+        logger.error('deleting a dream failed', { requestId: req.id, err });
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -184,7 +185,7 @@ router.post('/:id/chat', aiLimiter, async (req: Request, res: Response) => {
 
         res.json({ reply, chatHistory: updated });
     } catch (error) {
-        console.error('Dream chat error:', error);
+        logger.error('dream chat failed', { requestId: req.id, err: error });
         res.status(500).json({ error: 'Failed to reach the AI. Please try again.' });
     }
 });

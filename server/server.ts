@@ -5,6 +5,7 @@
 
 // Import config first — it validates the environment and exits on failure.
 import { PORT, IS_PRODUCTION } from './config.js';
+import { logger } from './logger.js';
 import app from './app.js';
 import sequelize, { initDB } from './models/db.js';
 import { migrateDB } from './models/index.js';
@@ -23,14 +24,17 @@ async function start() {
     await ensureUploadsDir();
 
     const server = app.listen(PORT, () => {
-        console.log(`[DreamOff] Server running on port ${PORT} (${IS_PRODUCTION ? 'production' : 'development'})`);
+        logger.info('server listening', { port: PORT, env: IS_PRODUCTION ? 'production' : 'development', logLevel: logger.level });
     });
 
     const shutdown = createShutdown({
         closeServer: () => new Promise(resolve => server.close(() => resolve())),
         closeDatabase: () => sequelize.close(),
         graceMs: SHUTDOWN_GRACE_MS,
-        exit: code => process.exit(code)
+        exit: code => process.exit(code),
+        // Otherwise the shutdown lines would go through console and miss the
+        // structured output the host collects.
+        log: { log: m => logger.info(m), warn: m => logger.warn(m), error: (m, err) => logger.error(m, { err }) }
     });
 
     for (const signal of ['SIGTERM', 'SIGINT'] as const) {
@@ -40,16 +44,16 @@ async function start() {
     // Log the reason before the platform restarts the process, so it is not
     // lost to whatever the container runtime does next.
     process.on('unhandledRejection', reason => {
-        console.error('[DreamOff] Unhandled promise rejection:', reason);
+        logger.error('unhandled promise rejection', { reason: reason instanceof Error ? reason : String(reason) });
     });
 
     process.on('uncaughtException', err => {
-        console.error('[DreamOff] Uncaught exception:', err);
+        logger.error('uncaught exception', { err });
         void shutdown('uncaughtException');
     });
 }
 
 start().catch(err => {
-    console.error('[DreamOff] Failed to start:', err);
+    logger.error('failed to start', { err });
     process.exit(1);
 });

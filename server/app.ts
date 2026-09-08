@@ -7,6 +7,7 @@ import { IS_PRODUCTION } from './config.js';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { securityHeaders } from './middleware/security.js';
+import { requestLogger, errorHandler } from './middleware/requestLog.js';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { UPLOADS_DIR, UPLOADS_ROUTE } from './storage.js';
@@ -26,6 +27,9 @@ app.set('trust proxy', 1);
 // Headers first, so even a response produced by an error further down still
 // carries them.
 app.use(securityHeaders());
+
+// Then the request id, so every line logged below can be correlated.
+app.use(requestLogger());
 
 // ── CORS — same-origin only in production, open in dev ──
 app.use(cors(IS_PRODUCTION ? { origin: false } : {}));
@@ -55,5 +59,9 @@ app.use(express.static(distPath));
 app.get('*', (_req: Request, res: Response) => {
     res.sendFile(join(distPath, 'index.html'));
 });
+
+// Must be last: Express identifies the error handler by its arity and only
+// reaches it after every route has declined.
+app.use(errorHandler());
 
 export default app;

@@ -6,6 +6,7 @@
 // the table to do it. Migrations are explicit, ordered and recorded.
 
 import { Umzug, SequelizeStorage } from 'umzug';
+import { logger } from '../logger.js';
 import sequelize from './db.js';
 import { migrations } from '../migrations/index.js';
 
@@ -24,12 +25,12 @@ export async function migrateDB(): Promise<void> {
     const applied = await umzug.up();
 
     if (applied.length === 0) {
-        console.log('[DreamOff] Schema up to date');
+        logger.info('schema up to date');
         return;
     }
 
     for (const migration of applied) {
-        console.log(`[DreamOff] Applied migration ${migration.name}`);
+        logger.info('migration applied', { migration: migration.name });
     }
 }
 

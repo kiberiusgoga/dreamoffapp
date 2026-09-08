@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import { logger } from '../logger.js';
 import { HfInference } from '@huggingface/inference';
 import { authenticateToken } from '../middleware/auth.js';
 import { aiLimiter } from '../middleware/rateLimit.js';
@@ -58,7 +59,7 @@ router.post('/interpret', authenticateToken, aiLimiter, async (req: Request, res
             language: resolvedLanguage
         });
     } catch (error) {
-        console.error('AI Interpretation Error:', error);
+        logger.error('interpretation failed', { requestId: req.id, err: error });
         res.status(500).json({ error: 'Failed to interpret dream using AI. Please check the server logs.' });
     }
 });
@@ -100,7 +101,7 @@ router.post('/image', authenticateToken, aiLimiter, async (req: Request, res: Re
 
         res.json({ imageUrl });
     } catch (error) {
-        console.error('AI Image Error:', error);
+        logger.error('image generation failed', { requestId: req.id, err: error });
         res.status(500).json({ error: 'Failed to generate image from AI.' });
     }
 });
