@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import Dream from '../models/Dream.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { deleteImage } from '../storage.js';
+import { aiLimiter } from '../middleware/rateLimit.js';
 import { languageName } from '../languages.js';
 import { generateText, isGeminiConfigured } from '../services/gemini.js';
 import type { ChatMessage } from '../models/Dream.js';
@@ -142,7 +143,7 @@ Reply with plain prose only: no JSON, no markdown, no headings, no bullet points
 }
 
 // ── Continue the conversation about a dream ──
-router.post('/:id/chat', async (req: Request, res: Response) => {
+router.post('/:id/chat', aiLimiter, async (req: Request, res: Response) => {
     try {
         const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
 

@@ -6,6 +6,7 @@
 import { IS_PRODUCTION } from './config.js';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import { securityHeaders } from './middleware/security.js';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { UPLOADS_DIR, UPLOADS_ROUTE } from './storage.js';
@@ -21,6 +22,10 @@ const app = express();
 // request looks like it comes from the proxy and the rate limiter would
 // throttle all users as one. Trust exactly one hop, not an arbitrary chain.
 app.set('trust proxy', 1);
+
+// Headers first, so even a response produced by an error further down still
+// carries them.
+app.use(securityHeaders());
 
 // ── CORS — same-origin only in production, open in dev ──
 app.use(cors(IS_PRODUCTION ? { origin: false } : {}));

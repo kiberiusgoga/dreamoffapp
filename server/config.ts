@@ -60,6 +60,11 @@ if (problems.length > 0) {
 export const AUTH_RATE_LIMIT_WINDOW_MS = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
 export const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX) || 10;
 
+// Spend limit for the paid model calls. Deliberately generous for a person
+// working through their dreams and nowhere near enough for a loop.
+export const AI_RATE_LIMIT_WINDOW_MS = Number(process.env.AI_RATE_LIMIT_WINDOW_MS) || 60 * 60 * 1000;
+export const AI_RATE_LIMIT_MAX = Number(process.env.AI_RATE_LIMIT_MAX) || 30;
+
 // AI keys are optional: the server runs fine without them, and the /api/ai
 // routes already return a clear 500 when they are absent.
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim() || '';

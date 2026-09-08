@@ -22,6 +22,7 @@ process.env.NODE_ENV = 'test';
 // The suite registers and logs in dozens of times; the limiter has its own
 // dedicated test that builds a limiter with a small budget.
 process.env.AUTH_RATE_LIMIT_MAX = '100000';
+process.env.AI_RATE_LIMIT_MAX = '100000';
 
 afterAll(async () => {
     // Windows keeps the .sqlite file locked until the connection is closed, so

@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { HfInference } from '@huggingface/inference';
 import { authenticateToken } from '../middleware/auth.js';
+import { aiLimiter } from '../middleware/rateLimit.js';
 import { HUGGINGFACE_API_KEY } from '../config.js';
 import { saveImage } from '../storage.js';
 import { languageName, languageCode } from '../languages.js';
@@ -33,7 +34,7 @@ export function interpretationPrompt(text: string, model: string, language: stri
 }
 
 // POST /api/ai/interpret
-router.post('/interpret', authenticateToken, async (req: Request, res: Response) => {
+router.post('/interpret', authenticateToken, aiLimiter, async (req: Request, res: Response) => {
     try {
         const { text, model, language, layout } = req.body ?? {};
 
@@ -63,7 +64,7 @@ router.post('/interpret', authenticateToken, async (req: Request, res: Response)
 });
 
 // POST /api/ai/image
-router.post('/image', authenticateToken, async (req: Request, res: Response) => {
+router.post('/image', authenticateToken, aiLimiter, async (req: Request, res: Response) => {
     try {
         const { text } = req.body ?? {};
 

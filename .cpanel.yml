@@ -1,3 +1,0 @@
-deployment:
-  tasks:
-    - /bin/cp -R * $DEPLOYMENT_PATH

@@ -1,0 +1,15 @@
+node_modules
+server/node_modules
+dist
+server/dist
+.git
+.github
+*.sqlite
+*.sqlite-journal
+server/uploads
+server/*.log
+.env
+.env.local
+server/.env
+coverage
+*.zip
