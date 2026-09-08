@@ -1,5 +1,5 @@
 /** One screen name understood by App's navigate(). */
-export type ScreenName = 'home' | 'add' | 'archive' | 'models' | 'detail' | 'profile';
+export type ScreenName = 'home' | 'add' | 'archive' | 'models' | 'detail' | 'profile' | 'privacy';
 
 /** Every screen receives this; params carries the screen-specific argument. */
 export type NavigateFn = (screen: ScreenName | string, params?: any) => void;

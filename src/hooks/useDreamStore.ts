@@ -1,5 +1,8 @@
 import { useSyncExternalStore } from 'react';
-import { apiRegister, apiLogin, apiGetMe, removeToken, getToken, setUnauthorizedHandler } from '../services/authApi';
+import {
+    apiRegister, apiLogin, apiGetMe, apiExportData, apiDeleteAccount,
+    removeToken, getToken, setUnauthorizedHandler
+} from '../services/authApi';
 import { fetchDreams, createDream, deleteDreamApi, sendChatMessage } from '../services/dreamsApi';
 import { Dream, User, ChatMessage, errorMessage } from '../types/index';
 
@@ -90,6 +93,18 @@ const store = {
         } catch (err) {
             return { success: false, error: errorMessage(err) };
         }
+    },
+
+    exportData: async (): Promise<void> => {
+        await apiExportData();
+    },
+
+    // Everything goes: account, dreams, images. The session is dropped here
+    // rather than waiting for the next request to notice.
+    deleteAccount: async (password: string): Promise<void> => {
+        await apiDeleteAccount(password);
+        memoryState = { ...memoryState, currentUser: null, dreams: [] };
+        notify();
     },
 
     logoutUser: () => {
@@ -190,6 +205,8 @@ export function useDreamStore() {
         registerUser: store.registerUser,
         loginUser: store.loginUser,
         logoutUser: store.logoutUser,
+        exportData: store.exportData,
+        deleteAccount: store.deleteAccount,
         checkAuth: store.checkAuth,
 
         addDream: store.addDream,

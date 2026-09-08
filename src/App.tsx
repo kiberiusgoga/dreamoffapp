@@ -11,6 +11,7 @@ import DreamDetailScreen from './screens/DreamDetailScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoginScreen from './screens/LoginScreen';
 import ModelsScreen from './screens/ModelsScreen';
+import PrivacyScreen from './screens/PrivacyScreen';
 import { useDreamStore } from './hooks/useDreamStore';
 import { t } from './utils/translations';
 import { ScreenName, NavigateFn } from './types/index';
@@ -167,6 +168,10 @@ export function AppRoutes() {
     return (
         <Routes>
             <Route path={paths.login} element={<LoginRoute />} />
+
+            {/* Outside the auth gate on purpose: a privacy notice behind a
+                login is not a privacy notice. */}
+            <Route path={paths.privacy} element={<PrivacyScreen />} />
 
             <Route element={<RequireAuth />}>
                 <Route path={paths.home} element={<ScreenWithNavigate Component={HomeScreen} />} />

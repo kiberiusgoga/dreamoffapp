@@ -13,7 +13,8 @@ export const paths = {
     archive: '/archive',
     models: '/models',
     detail: (id: string) => `/dream/${encodeURIComponent(id)}`,
-    profile: '/profile'
+    profile: '/profile',
+    privacy: '/privacy'
 } as const;
 
 /** Maps an onNavigate(screen, params) call onto a path. */
@@ -33,6 +34,8 @@ export function pathFor(screen: ScreenName | string, params?: unknown): string {
             return typeof params === 'string' && params ? paths.detail(params) : paths.archive;
         case 'profile':
             return paths.profile;
+        case 'privacy':
+            return paths.privacy;
         default:
             return paths.home;
     }
@@ -49,5 +52,8 @@ export function activeScreen(pathname: string): ScreenName | null {
     if (pathname.startsWith('/models')) return 'models';
     if (pathname.startsWith('/dream/')) return 'detail';
     if (pathname.startsWith('/profile')) return 'profile';
+    // Deliberately absent from the bottom bar: the notice is reachable signed
+    // out and is not a destination people navigate between.
+    if (pathname.startsWith('/privacy')) return null;
     return null;
 }

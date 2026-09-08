@@ -112,6 +112,48 @@ export async function apiLogin(email: string, password: string) {
     return data.user;
 }
 
+/**
+ * Downloads everything the account holds as a JSON file.
+ *
+ * Deliberately not apiFetch: that parses the body, and here the point is to
+ * hand the bytes to the browser rather than to read them.
+ */
+export async function apiExportData(): Promise<void> {
+    const token = getToken();
+    const response = await fetch(`${API_BASE}/me/export`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
+
+    if (!response.ok) {
+        const body = await readBody(response);
+        if (response.status === 401 && token) {
+            removeToken();
+            onUnauthorized?.();
+        }
+        throw new Error(errorFrom(body, response.status));
+    }
+
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `dreamoff-export-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    // Releasing it immediately would cancel the download in some browsers.
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
+/** Removes the account, every dream and every generated image. */
+export async function apiDeleteAccount(password: string): Promise<void> {
+    await apiFetch(`${API_BASE}/me`, {
+        method: 'DELETE',
+        body: JSON.stringify({ password })
+    });
+    removeToken();
+}
+
 export async function apiGetMe() {
     const data = await apiFetch(`${API_BASE}/me`);
     return data.user;

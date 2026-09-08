@@ -1,13 +1,104 @@
 import { useState } from 'react';
-import { Globe, Moon, X, Check, ArrowLeft, ArrowRight, LogOut } from 'lucide-react';
+import {
+    Globe, Moon, X, Check, ArrowLeft, ArrowRight, LogOut,
+    Download, Trash2, ShieldCheck, Loader2, AlertTriangle
+} from 'lucide-react';
 import Card from '../components/Card';
 import { useDreamStore } from '../hooks/useDreamStore';
 import { LANGUAGES, t } from '../utils/translations';
-import { NavigateFn } from '../types/index';
+import { NavigateFn, errorMessage } from '../types/index';
 
 export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }) {
-    const { language, setLanguage, currentUser, logoutUser } = useDreamStore();
+    const { language, setLanguage, currentUser, logoutUser, exportData, deleteAccount } = useDreamStore();
     const [showLangPicker, setShowLangPicker] = useState(false);
+
+    const [isExporting, setIsExporting] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+    const [deletePassword, setDeletePassword] = useState('');
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [dataError, setDataError] = useState('');
+
+    const handleExport = async () => {
+        setDataError('');
+        setIsExporting(true);
+        try {
+            await exportData();
+        } catch (err) {
+            setDataError(errorMessage(err));
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!deletePassword || isDeleting) return;
+        setDataError('');
+        setIsDeleting(true);
+        try {
+            await deleteAccount(deletePassword);
+            // The store clears the session, so the auth guard takes it from here.
+        } catch (err) {
+            setDataError(errorMessage(err));
+            setIsDeleting(false);
+        }
+    };
+
+    // Typing the password is the confirmation. A second "are you sure" on top
+    // of that only trains people to click through both.
+    const DeleteDialog = () => (
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+            <div className="w-full max-w-sm bg-surface/95 border border-danger/30 rounded-3xl p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-danger/15 rounded-xl text-danger">
+                        <AlertTriangle className="w-5 h-5" />
+                    </div>
+                    <h3 className="text-xl font-serif text-primary">Delete account</h3>
+                </div>
+
+                <p className="text-sm text-gray-400 leading-relaxed">
+                    This removes your account, every dream you have recorded, and every generated
+                    image. It cannot be undone.
+                </p>
+                <p className="text-xs text-gray-500">
+                    If you want a copy first, close this and export your data.
+                </p>
+
+                <input
+                    type="password"
+                    value={deletePassword}
+                    onChange={e => setDeletePassword(e.target.value)}
+                    placeholder="Confirm your password"
+                    aria-label="Confirm your password"
+                    autoFocus
+                    className="w-full bg-background/60 border border-border/30 rounded-xl px-4 py-3 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-danger/50"
+                />
+
+                {dataError && (
+                    <div role="alert" className="bg-danger/10 border border-danger/30 rounded-xl p-3">
+                        <p className="text-danger text-xs text-center">{dataError}</p>
+                    </div>
+                )}
+
+                <div className="flex gap-3 pt-1">
+                    <button
+                        onClick={() => { setShowDelete(false); setDeletePassword(''); setDataError(''); }}
+                        disabled={isDeleting}
+                        className="flex-1 py-3 rounded-xl border border-border/30 text-sm text-gray-300 hover:bg-surfaceLight/40 transition-colors disabled:opacity-50"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleDelete}
+                        disabled={!deletePassword || isDeleting}
+                        className="flex-1 py-3 rounded-xl bg-danger/90 hover:bg-danger text-black font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                        {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 
     // Custom Language Picker Modal
     const LanguagePicker = () => (
@@ -67,6 +158,7 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
             </button>
 
             {showLangPicker && <LanguagePicker />}
+            {showDelete && <DeleteDialog />}
 
             {/* Header */}
             <div className="flex items-center space-x-4 mb-4">
@@ -127,6 +219,67 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                         </div>
                     </div>
                 </Card>
+
+                {/* Your data */}
+                <h3 className="text-gray-500 text-xs uppercase tracking-[0.2em] font-bold ml-2 mb-4 pt-4">
+                    Your data
+                </h3>
+
+                <Card
+                    onClick={handleExport}
+                    className="flex items-center justify-between p-5 cursor-pointer hover:border-gold/50 transition-colors group"
+                >
+                    <div className="flex items-center gap-4 w-full">
+                        <div className="p-3 bg-surfaceLight/50 rounded-xl text-gold group-hover:scale-110 transition-transform shadow-inner">
+                            {isExporting ? <Loader2 className="w-6 h-6 animate-spin" /> : <Download className="w-6 h-6" />}
+                        </div>
+                        <div className="flex flex-col text-left flex-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Export</span>
+                            <span className="text-xl text-gray-100 font-serif">
+                                {isExporting ? 'Preparing…' : 'Download my data'}
+                            </span>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-gold transition-colors" />
+                    </div>
+                </Card>
+
+                <Card
+                    onClick={() => onNavigate('privacy')}
+                    className="flex items-center justify-between p-5 cursor-pointer hover:border-gold/50 transition-colors group"
+                >
+                    <div className="flex items-center gap-4 w-full">
+                        <div className="p-3 bg-surfaceLight/50 rounded-xl text-gold group-hover:scale-110 transition-transform shadow-inner">
+                            <ShieldCheck className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col text-left flex-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Privacy</span>
+                            <span className="text-xl text-gray-100 font-serif">How your data is handled</span>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-gold transition-colors" />
+                    </div>
+                </Card>
+
+                <Card
+                    onClick={() => setShowDelete(true)}
+                    className="flex items-center justify-between p-5 cursor-pointer hover:border-danger/50 transition-colors group relative overflow-hidden"
+                >
+                    <div className="absolute inset-0 bg-danger/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-center gap-4 relative z-10 w-full">
+                        <div className="p-3 bg-danger/15 rounded-xl text-danger group-hover:scale-110 transition-transform shadow-inner">
+                            <Trash2 className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col text-left flex-1">
+                            <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Irreversible</span>
+                            <span className="text-xl text-danger font-serif">Delete account</span>
+                        </div>
+                    </div>
+                </Card>
+
+                {dataError && !showDelete && (
+                    <div role="alert" className="bg-danger/10 border border-danger/30 rounded-xl p-3">
+                        <p className="text-danger text-xs text-center">{dataError}</p>
+                    </div>
+                )}
 
                 {/* Logout */}
                 <Card

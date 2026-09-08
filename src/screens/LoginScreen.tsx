@@ -157,8 +157,11 @@ export default function LoginScreen() {
                             {isLogin ? 'Sign up' : 'Login'}
                         </button>
                     </p>
-                    <p className="text-[10px] text-gray-700/60 mt-6 tracking-tight">
-                        Local Authentication System. Credentials are secure.
+                    <p className="text-[10px] text-gray-600 mt-6 tracking-tight">
+                        Your dreams are sent to an AI service to be interpreted.{' '}
+                        <a href="/privacy" className="text-accent/80 hover:text-accent underline underline-offset-2">
+                            How your data is handled
+                        </a>
                     </p>
                 </div>
 
