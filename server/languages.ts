@@ -33,7 +33,7 @@ export const LANGUAGE_NAMES: Record<string, string> = {
     el: 'Greek'
 };
 
-export const DEFAULT_LANGUAGE = 'en';
+const DEFAULT_LANGUAGE = 'en';
 
 /**
  * Resolves a picker code to the English name of that language.

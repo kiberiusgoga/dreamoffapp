@@ -229,12 +229,11 @@ test.describe('writing a dream', () => {
     // No AI keys are configured in this environment, so this is the path a
     // user hits today. It has to fail visibly rather than hang.
     test('reports failure when the AI is unreachable', async ({ page }) => {
-        // The failure is reported through window.alert. Playwright dismisses a
-        // dialog immediately when nothing is listening, so the handler has to
-        // be attached before the click that triggers it.
-        const alerts: string[] = [];
+        // A browser dialog would block the page, ignore the design and be
+        // impossible to style. Nothing should open one.
+        const dialogs: string[] = [];
         page.on('dialog', async dialog => {
-            alerts.push(dialog.message());
+            dialogs.push(dialog.message());
             await dialog.dismiss();
         });
 
@@ -248,14 +247,56 @@ test.describe('writing a dream', () => {
         await expect(page.getByText(/advertisement/i)).toBeVisible();
         await page.getByRole('button', { name: /skip ad/i }).click({ timeout: 15_000 });
 
-        await expect.poll(() => alerts, { timeout: 30_000 }).toContainEqual(
-            expect.stringMatching(/failed to process/i)
-        );
+        // The reason the server actually gave, inline and styled, rather than
+        // a generic "Failed to process dream." in a browser dialog.
+        const alert = page.getByRole('alert');
+        await expect(alert).toBeVisible({ timeout: 30_000 });
+        await expect(alert).toContainText(/GEMINI_API_KEY|failed to interpret/i);
+
+        expect(dialogs, 'a browser dialog was opened').toEqual([]);
 
         // Back on the form with the text still in it, so a retry does not
         // mean retyping the dream.
         const textarea = page.getByPlaceholder(/describe your dream/i);
         await expect(textarea).toBeVisible();
         await expect(textarea).toHaveValue('I was flying over a red ocean');
+    });
+});
+
+test.describe('keyboard', () => {
+    // Most of this app's navigation goes through Card, which was a bare div
+    // with an onClick: reachable with a mouse and by nothing else.
+    test('the home menu can be used without a mouse', async ({ page }) => {
+        await signUp(page);
+
+        await page.getByRole('button', { name: /write dream/i }).focus();
+        await page.keyboard.press('Enter');
+
+        await expect(page).toHaveURL(/\/add\/write$/);
+    });
+
+    test('an archive row opens with the keyboard', async ({ page, request }) => {
+        await signUpWithDreams(page, request);
+        await page.goto('/archive');
+
+        await page.getByRole('button', { name: /red ocean/i }).focus();
+        await page.keyboard.press('Enter');
+
+        await expect(page).toHaveURL(/\/dream\//);
+    });
+
+    test('Space activates a card as well as Enter', async ({ page }) => {
+        await signUp(page);
+
+        await page.getByRole('button', { name: /psych\. models/i }).focus();
+        await page.keyboard.press('Space');
+
+        await expect(page).toHaveURL(/\/models$/);
+    });
+
+    test('the menu tiles are announced as buttons', async ({ page }) => {
+        await signUp(page);
+        await expect(page.getByRole('button', { name: /record dream/i })).toBeVisible();
+        await expect(page.getByRole('button', { name: /psych\. models/i })).toBeVisible();
     });
 });

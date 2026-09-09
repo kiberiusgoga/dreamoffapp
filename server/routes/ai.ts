@@ -11,7 +11,7 @@ import type { DreamInterpretation } from '../models/Dream.js';
 
 const router = Router();
 
-export function interpretationPrompt(text: string, model: string, language: string): string {
+function interpretationPrompt(text: string, model: string, language: string): string {
     // The picker offers 21 languages; naming the target explicitly is what
     // makes the other nineteen actually work.
     const langString = languageName(language);

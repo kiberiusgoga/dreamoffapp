@@ -75,6 +75,7 @@ export default function LoginScreen() {
                         <div className="relative group">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-accent transition-colors duration-300" />
                             <input type="text" placeholder="Your Name" value={name}
+                                aria-label="Your name" autoComplete="name"
                                 onChange={(e) => setName(e.target.value)} className={INPUT_CLASS} />
                         </div>
                     )}
@@ -82,17 +83,20 @@ export default function LoginScreen() {
                     <div className="relative group">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-accent transition-colors duration-300" />
                         <input type="email" placeholder="Email Address" value={email}
+                            aria-label="Email address" autoComplete="email"
                             onChange={(e) => setEmail(e.target.value)} className={INPUT_CLASS} />
                     </div>
 
                     <div className="relative group">
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-accent transition-colors duration-300" />
                         <input type="password" placeholder="Password" value={password}
+                            aria-label="Password"
+                            autoComplete={isLogin ? 'current-password' : 'new-password'}
                             onChange={(e) => setPassword(e.target.value)} className={INPUT_CLASS} />
                     </div>
 
                     {error && (
-                        <div className="bg-danger/10 border border-danger/30 rounded-xl p-3">
+                        <div role="alert" className="bg-danger/10 border border-danger/30 rounded-xl p-3">
                             <p className="text-danger text-sm text-center font-medium">{error}</p>
                         </div>
                     )}

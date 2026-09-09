@@ -60,8 +60,12 @@ if (problems.length > 0) {
 export const AUTH_RATE_LIMIT_WINDOW_MS = Number(process.env.AUTH_RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
 export const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX) || 10;
 
-// Spend limit for the paid model calls. Deliberately generous for a person
-// working through their dreams and nowhere near enough for a loop.
+// Spend limit for the paid model calls.
+//
+// Counted per request, not per dream: writing one dream spends two, because
+// the interpretation and the image are separate calls to separate providers.
+// 30 is therefore about fifteen dreams an hour — generous for a person working
+// through their night, and nowhere near enough for a loop.
 export const AI_RATE_LIMIT_WINDOW_MS = Number(process.env.AI_RATE_LIMIT_WINDOW_MS) || 60 * 60 * 1000;
 export const AI_RATE_LIMIT_MAX = Number(process.env.AI_RATE_LIMIT_MAX) || 30;
 

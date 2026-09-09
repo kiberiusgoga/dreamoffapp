@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react';
 import { NavigateFn } from '../types/index';
-import { Mic, Send, Loader2, ArrowLeft, ChevronDown, Check } from 'lucide-react';
+import { Mic, Send, Loader2, ArrowLeft, ChevronDown, Check, AlertTriangle } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import { interpretDream } from '../services/interpretationAgent';
 import { generateDreamImage } from '../services/imageAgent';
 import { useDreamStore } from '../hooks/useDreamStore';
+import { errorMessage } from '../types/index';
 import VideoAdModal from '../components/VideoAdModal';
 
 const MODELS = [
@@ -40,6 +41,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
     const [isProcessing, setIsProcessing] = useState(false);
     const [showAd, setShowAd] = useState(false);
     const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false); // State for custom dropdown
+    const [error, setError] = useState('');
 
     const { addDream, language } = useDreamStore();
     const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -50,7 +52,11 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
             setIsRecording(false);
         } else {
             if (!('webkitSpeechRecognition' in window)) {
-                alert("Speech recognition not supported in this browser.");
+                setError(
+                    language === 'mk'
+                        ? 'Овој прелистувач не поддржува диктирање. Напишете го сонот наместо тоа.'
+                        : 'This browser cannot record speech. Write the dream instead.'
+                );
                 return;
             }
             const recognition: SpeechRecognitionLike = new (window as any).webkitSpeechRecognition();
@@ -80,32 +86,49 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
     };
 
     const handleInterpret = async () => {
-        if (!text.trim()) return;
-        setShowAd(false); // Close ad
-        setIsProcessing(true); // Start processing
+        const dreamText = text.trim();
+        if (!dreamText) return;
+
+        setShowAd(false);
+        setError('');
+        setIsProcessing(true);
 
         const deviceType = getDeviceType();
 
         try {
-            const [interpResult, imageUrl] = await Promise.all([
-                interpretDream(text, selectedModel, deviceType, language),
-                generateDreamImage(text)
+            // allSettled, not all: the interpretation is what the user came
+            // for and it has already been paid for by the time it arrives.
+            // Promise.all threw the whole thing away whenever the image —
+            // decoration — happened to fail.
+            const [interpretation, image] = await Promise.allSettled([
+                interpretDream(dreamText, selectedModel, deviceType, language),
+                generateDreamImage(dreamText)
             ]);
 
+            if (interpretation.status === 'rejected') {
+                throw interpretation.reason;
+            }
+
+            if (image.status === 'rejected') {
+                // Worth recording, not worth interrupting for: the detail
+                // screen simply omits the image.
+                console.warn('Dream image could not be generated:', image.reason);
+            }
+
             const newDream = await addDream({
-                text,
+                text: dreamText,
                 model: selectedModel,
                 layout: deviceType,
-                language: language,
-                transcription: interpResult.transcription,
-                interpretation: interpResult.interpretation,
-                imageUrl
+                language,
+                transcription: interpretation.value.transcription,
+                interpretation: interpretation.value.interpretation,
+                imageUrl: image.status === 'fulfilled' ? image.value : undefined
             });
 
             onNavigate('detail', newDream.id);
         } catch (e) {
-            console.error(e);
-            alert("Failed to process dream.");
+            // Inline, so the dream stays on screen and can be retried.
+            setError(errorMessage(e));
         } finally {
             setIsProcessing(false);
         }
@@ -219,6 +242,13 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
                     </div>
                 )}
             </div>
+
+            {error && (
+                <div role="alert" className="flex items-start gap-3 bg-danger/10 border border-danger/30 rounded-xl p-3">
+                    <AlertTriangle className="w-4 h-4 text-danger flex-shrink-0 mt-0.5" />
+                    <p className="text-danger text-sm leading-relaxed">{error}</p>
+                </div>
+            )}
 
             {/* Submit Button - Available in Both Modes */}
             <Button onClick={() => setShowAd(true)} disabled={!text} variant="action" className="w-full py-4 text-lg shadow-lg">

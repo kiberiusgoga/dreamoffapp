@@ -61,8 +61,3 @@ export function loadAdsenseScript(): Promise<void> {
 
     return scriptPromise;
 }
-
-/** Test seam: forget that the script was requested. */
-export function resetAdsenseScriptForTests(): void {
-    scriptPromise = null;
-}
