@@ -67,3 +67,39 @@ jobs:
             exit 1
           fi
           git checkout -- public
+
+  e2e:
+    name: End-to-end
+    runs-on: ubuntu-latest
+    needs: verify
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
+
+      - run: npm ci
+      - run: npm ci --prefix server
+
+      # --with-deps pulls the system libraries the browser needs on a bare
+      # runner; without it Chromium fails to launch rather than fails a test.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # The config builds the frontend and starts the server itself, in
+      # production mode against a scratch database.
+      - name: Run the suite
+        run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

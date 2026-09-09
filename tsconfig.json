@@ -23,6 +23,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "test", "vitest.config.ts", "vitest.workspace.ts", "tailwind.config.js"],
+  "include": ["src", "test", "e2e", "playwright.config.ts", "vitest.config.ts", "vitest.workspace.ts", "tailwind.config.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

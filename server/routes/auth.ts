@@ -177,7 +177,11 @@ router.delete('/me', authenticateToken, authLimiter, async (req: Request, res: R
         }
 
         if (!(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ error: 'Invalid credentials.' });
+            // 403, not 401. The session is perfectly valid — it is the
+            // confirmation that failed. The API client treats a 401 as "your
+            // token is dead" and signs the user out, so returning one here
+            // logged people out for mistyping their own password.
+            return res.status(403).json({ error: 'Incorrect password.' });
         }
 
         // Explicit rather than relying on the foreign key: SQLite only

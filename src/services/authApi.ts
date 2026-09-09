@@ -80,6 +80,10 @@ export async function apiFetch(url: string, options: RequestInit = {}) {
     if (!response.ok) {
         // The token is gone or no longer valid: drop it and let the app fall
         // back to the login screen rather than retrying forever.
+        //
+        // This is why a failed password *confirmation* must not be a 401:
+        // re-authenticating inside a live session is a different failure from
+        // the session itself having expired.
         if (response.status === 401 && token) {
             removeToken();
             onUnauthorized?.();

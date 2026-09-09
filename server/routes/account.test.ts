@@ -117,11 +117,17 @@ describe('DELETE /api/auth/me', () => {
         expect(res.body.error).toMatch(/password is required/i);
     });
 
-    it('rejects the wrong password', async () => {
+    // 403 rather than 401: the session is valid, the confirmation is not. The
+    // API client discards the token on a 401, so returning one here signed
+    // people out for mistyping their own password — found by the e2e run.
+    it('rejects the wrong password without ending the session', async () => {
         const res = await remove({ password: 'not-my-password' });
-        expect(res.status).toBe(401);
 
-        // And the account is still there.
+        expect(res.status).toBe(403);
+        expect(res.status).not.toBe(401);
+        expect(res.body.error).toMatch(/incorrect password/i);
+
+        // The account is still there, and so is the session.
         expect((await request(app).get('/api/auth/me').set('Authorization', `Bearer ${token}`)).status).toBe(200);
     });
 
