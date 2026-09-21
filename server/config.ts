@@ -30,6 +30,20 @@ function required(name: string, hint: string): string {
     return raw;
 }
 
+/**
+ * Reads a value the server can run without.
+ *
+ * Placeholders count as absent here too. Someone who copies .env.example and
+ * leaves `your_gemini_api_key_here` in place would otherwise look configured:
+ * the app would make a real call with a bogus key and report "Failed to
+ * interpret dream", instead of the accurate "not configured on the server".
+ */
+function optional(name: string): string {
+    const raw = process.env[name]?.trim();
+    if (!raw || PLACEHOLDERS.has(raw)) return '';
+    return raw;
+}
+
 export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 export const PORT = Number(process.env.PORT) || 5000;
 
@@ -71,5 +85,5 @@ export const AI_RATE_LIMIT_MAX = Number(process.env.AI_RATE_LIMIT_MAX) || 30;
 
 // AI keys are optional: the server runs fine without them, and the /api/ai
 // routes already return a clear 500 when they are absent.
-export const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim() || '';
-export const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY?.trim() || '';
+export const GEMINI_API_KEY = optional('GEMINI_API_KEY');
+export const HUGGINGFACE_API_KEY = optional('HUGGINGFACE_API_KEY');
