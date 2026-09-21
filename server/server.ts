@@ -11,6 +11,8 @@ import sequelize, { initDB } from './models/db.js';
 import { migrateDB } from './models/index.js';
 import { ensureUploadsDir } from './storage.js';
 import { createShutdown } from './shutdown.js';
+import { startImageSweeper } from './maintenance.js';
+import { UPLOAD_SWEEP_GRACE_MS, UPLOAD_SWEEP_INTERVAL_MS } from './config.js';
 
 /**
  * How long to let in-flight requests finish. A platform usually sends SIGKILL
@@ -27,8 +29,15 @@ async function start() {
         logger.info('server listening', { port: PORT, env: IS_PRODUCTION ? 'production' : 'development', logLevel: logger.level });
     });
 
+    // Runs once now, then on a timer. Anything abandoned mid-flow is
+    // reclaimed rather than accumulating a megabyte at a time.
+    const stopSweeper = startImageSweeper({
+        graceMs: UPLOAD_SWEEP_GRACE_MS,
+        intervalMs: UPLOAD_SWEEP_INTERVAL_MS
+    });
+
     const shutdown = createShutdown({
-        closeServer: () => new Promise(resolve => server.close(() => resolve())),
+        closeServer: () => new Promise(resolve => { stopSweeper(); server.close(() => resolve()); }),
         closeDatabase: () => sequelize.close(),
         graceMs: SHUTDOWN_GRACE_MS,
         exit: code => process.exit(code),

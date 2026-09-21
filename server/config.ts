@@ -83,6 +83,12 @@ export const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX) || 10
 export const AI_RATE_LIMIT_WINDOW_MS = Number(process.env.AI_RATE_LIMIT_WINDOW_MS) || 60 * 60 * 1000;
 export const AI_RATE_LIMIT_MAX = Number(process.env.AI_RATE_LIMIT_MAX) || 30;
 
+// Orphaned uploads: an image is written before its dream exists, so anything
+// that interrupts the flow leaves a paid-for file behind. The grace period is
+// what stops the sweep racing an image that is still being attached.
+export const UPLOAD_SWEEP_GRACE_MS = Number(process.env.UPLOAD_SWEEP_GRACE_MS) || 24 * 60 * 60 * 1000;
+export const UPLOAD_SWEEP_INTERVAL_MS = Number(process.env.UPLOAD_SWEEP_INTERVAL_MS) || 6 * 60 * 60 * 1000;
+
 // AI keys are optional: the server runs fine without them, and the /api/ai
 // routes already return a clear 500 when they are absent.
 export const GEMINI_API_KEY = optional('GEMINI_API_KEY');
