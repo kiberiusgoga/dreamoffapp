@@ -171,7 +171,7 @@ router.post('/:id/chat', aiLimiter, async (req: Request, res: Response) => {
         }
 
         const history: ChatMessage[] = Array.isArray(dream.chatHistory) ? dream.chatHistory : [];
-        const reply = await generateText(chatPrompt(dream, history, message));
+        const reply = await generateText(chatPrompt(dream, history, message), 'chat');
 
         // Persist both turns, so the conversation survives a reload. Assigning
         // a new array matters: Sequelize does not detect in-place JSON mutation.

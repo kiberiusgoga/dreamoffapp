@@ -48,7 +48,8 @@ router.post('/interpret', authenticateToken, aiLimiter, async (req: Request, res
 
         const resolvedLanguage = languageCode(language);
         const interpretation = await generateJSON<DreamInterpretation>(
-            interpretationPrompt(text, String(model ?? 'jung'), resolvedLanguage)
+            interpretationPrompt(text, String(model ?? 'jung'), resolvedLanguage),
+            'interpret'
         );
 
         res.json({
@@ -78,7 +79,8 @@ router.post('/image', authenticateToken, aiLimiter, async (req: Request, res: Re
 
         // 1. Turn the dream into an image prompt.
         const imagePrompt = await generateText(
-            `Create a short, descriptive 1-sentence prompt for an AI image generator (like Midjourney or DALL-E) based on this dream. Aim for a surreal, cinematic, mystical, and beautiful aesthetic. The dream is: "${text}". Reply ONLY with the English image prompt. Do NOT include any prefixes like "Prompt:".`
+            `Create a short, descriptive 1-sentence prompt for an AI image generator (like Midjourney or DALL-E) based on this dream. Aim for a surreal, cinematic, mystical, and beautiful aesthetic. The dream is: "${text}". Reply ONLY with the English image prompt. Do NOT include any prefixes like "Prompt:".`,
+            'image-prompt'
         );
 
         // 2. Request the image from Hugging Face.
