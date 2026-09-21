@@ -59,7 +59,17 @@ export default defineConfig({
             // The suite signs in repeatedly; the limiter has its own coverage.
             AUTH_RATE_LIMIT_MAX: '10000',
             AI_RATE_LIMIT_MAX: '10000',
-            LOG_LEVEL: 'warn'
+            LOG_LEVEL: 'warn',
+
+            // Blank on purpose, and set here rather than left to chance.
+            //
+            // dotenv does not overwrite a variable that is already present, so
+            // these win over whatever is in server/.env. Without them the suite
+            // picks up a developer's real keys: the "AI is unreachable" journey
+            // stops being reachable, and every run spends money at Google and
+            // Hugging Face — in CI too, on every push.
+            GEMINI_API_KEY: '',
+            HUGGINGFACE_API_KEY: ''
         }
     }
 });
