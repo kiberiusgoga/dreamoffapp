@@ -5,9 +5,7 @@
 // the model name is configured once and tests can mock a single module.
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GEMINI_API_KEY } from '../config.js';
-
-const MODEL = 'gemini-2.5-flash';
+import { GEMINI_API_KEY, GEMINI_MODEL } from '../config.js';
 
 export function isGeminiConfigured(): boolean {
     return Boolean(GEMINI_API_KEY);
@@ -17,7 +15,7 @@ function model() {
     if (!GEMINI_API_KEY) {
         throw new Error('GEMINI_API_KEY is not configured on the server.');
     }
-    return new GoogleGenerativeAI(GEMINI_API_KEY).getGenerativeModel({ model: MODEL });
+    return new GoogleGenerativeAI(GEMINI_API_KEY).getGenerativeModel({ model: GEMINI_MODEL });
 }
 
 /** Runs a prompt and returns the trimmed text response. */

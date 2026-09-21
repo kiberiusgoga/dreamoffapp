@@ -86,4 +86,9 @@ export const AI_RATE_LIMIT_MAX = Number(process.env.AI_RATE_LIMIT_MAX) || 30;
 // AI keys are optional: the server runs fine without them, and the /api/ai
 // routes already return a clear 500 when they are absent.
 export const GEMINI_API_KEY = optional('GEMINI_API_KEY');
+
+// Model names get retired: gemini-2.5-flash stopped accepting new users and
+// returned a 404 that read like a broken key. Configurable so the next
+// retirement is a line in .env rather than a code change.
+export const GEMINI_MODEL = optional('GEMINI_MODEL') || 'gemini-3.6-flash';
 export const HUGGINGFACE_API_KEY = optional('HUGGINGFACE_API_KEY');
