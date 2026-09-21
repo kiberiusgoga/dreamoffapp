@@ -41,12 +41,12 @@ export default class ErrorBoundary extends Component<Props, State> {
                     </div>
 
                     <h1 className="text-2xl font-serif text-primary mb-3">Something went wrong</h1>
-                    <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                    <p className="text-muted text-sm mb-6 leading-relaxed">
                         The app hit an unexpected error while rendering. Your dreams are safe —
                         they are stored on the server.
                     </p>
 
-                    <pre className="text-left text-[11px] text-gray-600 bg-black/30 border border-border/20 rounded-xl p-3 mb-6 overflow-x-auto whitespace-pre-wrap break-words">
+                    <pre className="text-left text-[11px] text-muted bg-black/30 border border-border/20 rounded-xl p-3 mb-6 overflow-x-auto whitespace-pre-wrap break-words">
                         {error.message}
                     </pre>
 

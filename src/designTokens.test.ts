@@ -99,3 +99,59 @@ describe('contrast on the app surfaces', () => {
         expect(contrast(colors.danger, colors.accent)).toBeGreaterThan(1.2);
     });
 });
+
+describe('text contrast', () => {
+    // Tailwind's grey ramp, as it is actually emitted.
+    const GRAY: Record<string, string> = {
+        '500': '#6b7280', '600': '#4b5563', '700': '#374151'
+    };
+
+    const surfaces = {
+        surface: colors.surface,
+        background: colors.background,
+        authSurfaceDeep: colors.authSurfaceDeep,
+        authSurface: colors.authSurface
+    };
+
+    it('has a muted colour that clears AA on every surface it is painted on', () => {
+        for (const [name, surface] of Object.entries(surfaces)) {
+            expect(contrast(colors.muted, surface), `muted on ${name}`).toBeGreaterThanOrEqual(4.5);
+        }
+    });
+
+    // The shades it replaced. gray-500 reached 3.95 — large text only — and
+    // the other two never passed at all.
+    it('is an improvement on the greys it replaced', () => {
+        for (const [shade, hex] of Object.entries(GRAY)) {
+            expect(
+                contrast(colors.muted, colors.surface),
+                `muted should beat gray-${shade}`
+            ).toBeGreaterThan(contrast(hex, colors.surface));
+        }
+    });
+
+    // Colour is not the only signal, but it is the one that was failing.
+    it('uses no grey shade below AA anywhere in the app', () => {
+        const offenders = sourceFiles()
+            .map(file => ({
+                file,
+                hits: readFileSync(file, 'utf8').match(/\b(?:text|placeholder)-gray-(?:500|600|700|800|900)\b/g)
+            }))
+            .filter(r => r.hits);
+
+        expect(
+            offenders.map(o => `${o.file}: ${o.hits!.join(', ')}`),
+            'these shades do not reach 4.5:1 on this app’s surfaces'
+        ).toEqual([]);
+    });
+
+    it('keeps a readable hierarchy rather than flattening everything', () => {
+        // gray-300 and gray-400 already pass; muted is the dimmest rung.
+        const rungs = ['#d1d5db', '#9ca3af', colors.muted]
+            .map(c => contrast(c, colors.surface));
+
+        expect(rungs[0]).toBeGreaterThan(rungs[1]);
+        expect(rungs[1]).toBeGreaterThan(rungs[2]);
+        expect(rungs[2]).toBeGreaterThanOrEqual(4.5);
+    });
+});

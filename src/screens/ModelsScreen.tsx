@@ -54,7 +54,7 @@ export default function ModelsScreen({ onNavigate }: { onNavigate: NavigateFn })
 
             <div className="text-center pt-8 mb-4">
                 <h2 className="text-3xl font-serif text-primary mb-2">{t(language, 'models')}</h2>
-                <p className="text-gray-500 text-sm italic">Explore the frameworks used to interpret your dreams</p>
+                <p className="text-muted text-sm italic">Explore the frameworks used to interpret your dreams</p>
             </div>
 
             <div className="grid grid-cols-1 gap-4">

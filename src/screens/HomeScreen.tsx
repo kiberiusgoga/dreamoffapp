@@ -46,7 +46,7 @@ export default function HomeScreen({ onNavigate }: { onNavigate: NavigateFn }) {
                 <h1 className="text-4xl font-serif text-primary drop-shadow-[0_0_10px_rgba(212,175,55,0.3)] tracking-wide">
                     {t(language, 'appTitle')}
                 </h1>
-                <p className="font-serif italic text-gray-500 text-xs max-w-[90%] mx-auto leading-tight">
+                <p className="font-serif italic text-muted text-xs max-w-[90%] mx-auto leading-tight">
                     {t(language, 'dailyQuote')}
                 </p>
             </div>

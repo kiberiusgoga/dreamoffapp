@@ -68,20 +68,20 @@ export default function ArchiveScreen({ onNavigate }: { onNavigate: NavigateFn }
             <h2 className="text-3xl font-serif text-center text-primary">Dream Archive</h2>
 
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 pointer-events-none" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted w-4 h-4 pointer-events-none" />
                 <input
                     type="text"
                     value={query}
                     onChange={e => setQuery(e.target.value)}
                     placeholder={language === 'mk' ? 'Пребарај соништа...' : 'Search dreams...'}
                     aria-label={language === 'mk' ? 'Пребарај соништа' : 'Search dreams'}
-                    className="w-full bg-surface border border-border/30 rounded-xl pl-10 pr-10 py-3 text-sm placeholder-gray-600 focus:outline-none focus:border-border/60 transition-colors"
+                    className="w-full bg-surface border border-border/30 rounded-xl pl-10 pr-10 py-3 text-sm placeholder-muted focus:outline-none focus:border-border/60 transition-colors"
                 />
                 {isSearching && (
                     <button
                         onClick={() => setQuery('')}
                         aria-label={language === 'mk' ? 'Исчисти пребарување' : 'Clear search'}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors"
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -89,7 +89,7 @@ export default function ArchiveScreen({ onNavigate }: { onNavigate: NavigateFn }
             </div>
 
             {isSearching && dreams.length > 0 && (
-                <p className="text-[11px] text-gray-500 uppercase tracking-widest text-center">
+                <p className="text-[11px] text-muted uppercase tracking-widest text-center">
                     {results.length === 1
                         ? (language === 'mk' ? '1 сон пронајден' : '1 dream found')
                         : (language === 'mk'
@@ -100,13 +100,13 @@ export default function ArchiveScreen({ onNavigate }: { onNavigate: NavigateFn }
 
             <div className="grid grid-cols-1 gap-3">
                 {dreams.length === 0 && (
-                    <div className="text-center text-gray-500 py-16 opacity-50 font-serif italic">
+                    <div className="text-center text-muted py-16 opacity-50 font-serif italic">
                         {language === 'mk' ? 'Сè уште нема запишани соништа.' : 'No dreams recorded yet.'}
                     </div>
                 )}
 
                 {dreams.length > 0 && results.length === 0 && (
-                    <div className="text-center text-gray-500 py-16 opacity-60 font-serif italic">
+                    <div className="text-center text-muted py-16 opacity-60 font-serif italic">
                         {language === 'mk'
                             ? `Ниту еден сон не одговара на „${query.trim()}“.`
                             : `No dreams match “${query.trim()}”.`}
@@ -129,7 +129,7 @@ export default function ArchiveScreen({ onNavigate }: { onNavigate: NavigateFn }
                                 />
                             ) : (
                                 <div className="w-[60px] h-[60px] rounded-xl border border-border/30 bg-surfaceLight/30 flex items-center justify-center flex-shrink-0">
-                                    <Moon className="w-6 h-6 text-gray-600" />
+                                    <Moon className="w-6 h-6 text-muted" />
                                 </div>
                             )}
                             <div className="flex-1 min-w-0 flex flex-col gap-1">
@@ -140,7 +140,7 @@ export default function ArchiveScreen({ onNavigate }: { onNavigate: NavigateFn }
                                     {dream.text || dream.title || dream.content}
                                 </p>
                                 {dream.model && (
-                                    <span className="text-[10px] text-gray-500 bg-black/30 border border-border/15 px-2 py-0.5 rounded-md w-fit">
+                                    <span className="text-[10px] text-muted bg-black/30 border border-border/15 px-2 py-0.5 rounded-md w-fit">
                                         {dream.model}
                                     </span>
                                 )}

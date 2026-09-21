@@ -24,4 +24,5 @@ export async function initDB() {
     }
 }
 
+export { dbPath };
 export default sequelize;

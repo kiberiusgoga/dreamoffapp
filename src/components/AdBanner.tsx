@@ -15,10 +15,10 @@ function DevPreview() {
             className="w-full rounded-2xl border border-dashed border-border/25 bg-surface/30 flex flex-col items-center justify-center gap-1 text-center px-4"
             style={{ minHeight: HEIGHT }}
         >
-            <span className="text-[10px] uppercase tracking-[0.2em] text-gray-600 font-bold">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-muted font-bold">
                 Ad slot &middot; not configured
             </span>
-            <span className="text-[9px] text-gray-700 max-w-[240px] leading-snug">
+            <span className="text-[9px] text-muted max-w-[240px] leading-snug">
                 Set VITE_ADSENSE_CLIENT and VITE_ADSENSE_SLOT_HOME to serve a real ad here.
             </span>
         </div>

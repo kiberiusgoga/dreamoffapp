@@ -42,14 +42,14 @@ export default function PrivacyScreen() {
                         <ShieldCheck className="w-6 h-6 text-accent" />
                     </div>
                     <h1 className="text-3xl font-serif text-primary">Privacy</h1>
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-muted italic">
                         A dream diary holds unusually personal writing. This page says plainly what
                         happens to it.
                     </p>
                 </header>
 
                 <div className="rounded-xl border border-dashed border-border/30 bg-surface/40 p-4">
-                    <p className="text-[11px] text-gray-500 leading-relaxed">
+                    <p className="text-[11px] text-muted leading-relaxed">
                         <span className="text-accent font-bold uppercase tracking-wider">Before launch:</span>{' '}
                         replace the bracketed placeholders with the operator&rsquo;s legal name, address
                         and contact address, and have this reviewed by someone qualified in your
@@ -150,7 +150,7 @@ export default function PrivacyScreen() {
                         Until you delete it. There is no automatic expiry, and deleted records are removed
                         rather than flagged as hidden.
                     </p>
-                    <p className="text-gray-500">
+                    <p className="text-muted">
                         Backups, if the operator keeps any, may hold a copy for a short period after
                         deletion. State that period here once your backup policy is settled:{' '}
                         <strong className="text-gray-300">[backup retention]</strong>.
@@ -158,8 +158,8 @@ export default function PrivacyScreen() {
                 </Section>
 
                 <footer className="pt-6 border-t border-border/20">
-                    <p className="text-[11px] text-gray-600">
-                        Last updated <strong className="text-gray-500">[date]</strong>. Material changes
+                    <p className="text-[11px] text-muted">
+                        Last updated <strong className="text-muted">[date]</strong>. Material changes
                         will be announced in the app before they take effect.
                     </p>
                 </footer>

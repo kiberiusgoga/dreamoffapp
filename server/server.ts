@@ -7,12 +7,16 @@
 import { PORT, IS_PRODUCTION } from './config.js';
 import { logger } from './logger.js';
 import app from './app.js';
-import sequelize, { initDB } from './models/db.js';
+import sequelize, { initDB, dbPath } from './models/db.js';
 import { migrateDB } from './models/index.js';
 import { ensureUploadsDir } from './storage.js';
 import { createShutdown } from './shutdown.js';
 import { startImageSweeper } from './maintenance.js';
-import { UPLOAD_SWEEP_GRACE_MS, UPLOAD_SWEEP_INTERVAL_MS } from './config.js';
+import { startBackups, backupDir } from './backup.js';
+import {
+    UPLOAD_SWEEP_GRACE_MS, UPLOAD_SWEEP_INTERVAL_MS,
+    BACKUP_INTERVAL_MS, BACKUP_KEEP, BACKUP_DIR
+} from './config.js';
 
 /**
  * How long to let in-flight requests finish. A platform usually sends SIGKILL
@@ -36,8 +40,22 @@ async function start() {
         intervalMs: UPLOAD_SWEEP_INTERVAL_MS
     });
 
+    // VACUUM INTO gives a consistent copy while the server keeps serving, so
+    // this can run on a timer rather than needing a maintenance window.
+    const stopBackups = BACKUP_INTERVAL_MS > 0
+        ? startBackups({
+            directory: backupDir(dbPath, BACKUP_DIR),
+            intervalMs: BACKUP_INTERVAL_MS,
+            keep: BACKUP_KEEP
+        })
+        : () => {};
+
     const shutdown = createShutdown({
-        closeServer: () => new Promise(resolve => { stopSweeper(); server.close(() => resolve()); }),
+        closeServer: () => new Promise(resolve => {
+            stopSweeper();
+            stopBackups();
+            server.close(() => resolve());
+        }),
         closeDatabase: () => sequelize.close(),
         graceMs: SHUTDOWN_GRACE_MS,
         exit: code => process.exit(code),

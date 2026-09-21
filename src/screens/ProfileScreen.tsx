@@ -59,7 +59,7 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                     This removes your account, every dream you have recorded, and every generated
                     image. It cannot be undone.
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted">
                     If you want a copy first, close this and export your data.
                 </p>
 
@@ -70,7 +70,7 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                     placeholder="Confirm your password"
                     aria-label="Confirm your password"
                     autoFocus
-                    className="w-full bg-background/60 border border-border/30 rounded-xl px-4 py-3 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-danger/50"
+                    className="w-full bg-background/60 border border-border/30 rounded-xl px-4 py-3 text-sm text-gray-200 placeholder-muted focus:outline-none focus:border-danger/50"
                 />
 
                 {dataError && (
@@ -130,7 +130,7 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                         >
                             <div className="flex items-center gap-4">
                                 {/* Simple visual indicator */}
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${language === lang.code ? 'bg-gold text-black' : 'bg-surfaceLight text-gray-500'}`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${language === lang.code ? 'bg-gold text-black' : 'bg-surfaceLight text-muted'}`}>
                                     <span className="text-xs font-bold uppercase">{lang.code.substring(0, 2)}</span>
                                 </div>
                                 <span className={`font-serif text-lg ${language === lang.code ? 'text-gold' : 'text-gray-300 group-hover:text-gray-100'}`}>
@@ -181,7 +181,7 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
 
             {/* Settings Group */}
             <div className="space-y-4">
-                <h3 className="text-gray-500 text-xs uppercase tracking-[0.2em] font-bold ml-2 mb-4">
+                <h3 className="text-muted text-xs uppercase tracking-[0.2em] font-bold ml-2 mb-4">
                     {t(language, 'settings')}
                 </h3>
 
@@ -203,25 +203,25 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                             </span>
                         </div>
                         {/* Only ArrowRight now, no extra gear */}
-                        <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-gold transition-colors" />
+                        <ArrowRight className="w-5 h-5 text-muted group-hover:text-gold transition-colors" />
                     </div>
                 </Card>
 
                 {/* Theme (Mock) */}
                 <Card className="flex items-center justify-between p-5 opacity-70">
                     <div className="flex items-center gap-4">
-                        <div className="p-3 bg-surfaceLight/50 rounded-xl text-gray-500">
+                        <div className="p-3 bg-surfaceLight/50 rounded-xl text-muted">
                             <Moon className="w-6 h-6" />
                         </div>
                         <div className="flex flex-col text-left">
                             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">{t(language, 'theme')}</span>
-                            <span className="text-xl text-gray-500 font-serif">Baroque AI</span>
+                            <span className="text-xl text-muted font-serif">Baroque AI</span>
                         </div>
                     </div>
                 </Card>
 
                 {/* Your data */}
-                <h3 className="text-gray-500 text-xs uppercase tracking-[0.2em] font-bold ml-2 mb-4 pt-4">
+                <h3 className="text-muted text-xs uppercase tracking-[0.2em] font-bold ml-2 mb-4 pt-4">
                     Your data
                 </h3>
 
@@ -239,7 +239,7 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                                 {isExporting ? 'Preparing…' : 'Download my data'}
                             </span>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-gold transition-colors" />
+                        <ArrowRight className="w-5 h-5 text-muted group-hover:text-gold transition-colors" />
                     </div>
                 </Card>
 
@@ -255,7 +255,7 @@ export default function ProfileScreen({ onNavigate }: { onNavigate: NavigateFn }
                             <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Privacy</span>
                             <span className="text-xl text-gray-100 font-serif">How your data is handled</span>
                         </div>
-                        <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-gold transition-colors" />
+                        <ArrowRight className="w-5 h-5 text-muted group-hover:text-gold transition-colors" />
                     </div>
                 </Card>
 

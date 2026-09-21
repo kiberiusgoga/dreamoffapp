@@ -151,3 +151,30 @@ test.describe('the auth gate', () => {
         await expect(page).toHaveURL(/\/privacy$/);
     });
 });
+
+test.describe('the sign-in screen offers only what works', () => {
+    // These three called onClick={() => {}}: an offer the app could not keep.
+    test('shows no social sign-in buttons', async ({ page }) => {
+        await page.goto('/login');
+
+        for (const provider of ['Google', 'Apple', 'Facebook']) {
+            await expect(
+                page.getByRole('button', { name: new RegExp(`continue with ${provider}`, 'i') })
+            ).toBeHidden();
+        }
+        await expect(page.getByText(/or continue with/i)).toBeHidden();
+    });
+
+    test('still signs people up with the form that does work', async ({ page }) => {
+        await signUp(page);
+        await expect(page.getByText(/welcome, dreamer/i)).toBeVisible();
+    });
+
+    test('labels every field for assistive technology', async ({ page }) => {
+        await page.goto('/login');
+
+        await expect(page.getByLabel(/your name/i)).toBeVisible();
+        await expect(page.getByLabel(/email address/i)).toBeVisible();
+        await expect(page.getByLabel(/^password$/i)).toBeVisible();
+    });
+});

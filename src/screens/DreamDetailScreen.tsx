@@ -119,7 +119,7 @@ export default function DreamDetailScreen({ dreamId, onBack }: { dreamId: string
                             {/* Reflections */}
                             {(dream.interpretation.reflections || dream.interpretation.actions) && (
                                 <div className="bg-surfaceLight/30 p-4 rounded-xl border border-dashed border-border/30">
-                                    <h3 className="text-gray-500 text-xs uppercase mb-2">Guidance</h3>
+                                    <h3 className="text-muted text-xs uppercase mb-2">Guidance</h3>
                                     <ul className="list-disc list-inside text-sm text-gray-400 space-y-1">
                                         {(dream.interpretation.reflections ?? dream.interpretation.actions ?? []).map((r: string, i: number) => (
                                             <li key={i}>{r}</li>
@@ -129,7 +129,7 @@ export default function DreamDetailScreen({ dreamId, onBack }: { dreamId: string
                             )}
                         </div>
                     ) : (
-                        <Card className="text-center text-gray-500 italic py-8">
+                        <Card className="text-center text-muted italic py-8">
                             {lang === 'mk'
                                 ? 'Толкувањето не е достапно за овој сон.'
                                 : 'No interpretation is available for this dream.'}
@@ -185,7 +185,7 @@ export default function DreamDetailScreen({ dreamId, onBack }: { dreamId: string
 
                     <div className="flex gap-2">
                         <input
-                            className="flex-1 bg-surface border border-border/30 rounded-lg px-3 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-border/60 disabled:opacity-50"
+                            className="flex-1 bg-surface border border-border/30 rounded-lg px-3 py-3 text-white placeholder-muted focus:outline-none focus:border-border/60 disabled:opacity-50"
                             placeholder={lang === 'mk' ? "Постави прашање..." : "Ask a question..."}
                             value={chatInput}
                             onChange={e => setChatInput(e.target.value)}

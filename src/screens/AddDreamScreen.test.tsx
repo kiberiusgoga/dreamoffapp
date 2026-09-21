@@ -27,43 +27,19 @@ const INTERPRETATION = {
     language: 'en'
 };
 
-/**
- * Writes a dream and clicks through the ad gate to the AI call.
- *
- * The gate is a five second countdown of chained setTimeouts. Fake timers have
- * to be installed before the modal mounts — installing them afterwards leaves
- * the already-scheduled real timeout pending, and the countdown never moves.
- *
- * fireEvent rather than userEvent for the text: userEvent inserts a timer per
- * keystroke, which fights the frozen clock for no benefit here.
- */
+/** Writes a dream and asks for an interpretation. */
 async function submit(text = 'I was flying over a red ocean') {
     render(<AddDreamScreen onNavigate={onNavigate} initialMode="write" />);
 
     fireEvent.change(screen.getByPlaceholderText(/describe your dream/i), { target: { value: text } });
     fireEvent.click(screen.getByRole('button', { name: /interpret dream/i }));
 
-    // One second at a time. The countdown chains a fresh setTimeout from an
-    // effect on each tick, so a single six-second jump fires the first timer
-    // and then has nothing left to fire — React has not re-rendered to
-    // schedule the next one yet.
-    for (let second = 0; second < 6; second++) {
-        await act(async () => {
-            await vi.advanceTimersByTimeAsync(1000);
-        });
-    }
-
-    fireEvent.click(screen.getByRole('button', { name: /skip ad/i }));
-
     // Let the mocked promises settle.
-    await act(async () => {
-        await vi.advanceTimersByTimeAsync(0);
-    });
+    await act(async () => { await Promise.resolve(); });
+    await act(async () => { await Promise.resolve(); });
 }
 
 beforeEach(() => {
-    // Before render, for the reason above.
-    vi.useFakeTimers();
     vi.clearAllMocks();
     interpretDream.mockResolvedValue(INTERPRETATION);
     generateDreamImage.mockResolvedValue('/uploads/abc.png');
@@ -71,14 +47,18 @@ beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
 });
 
-// Unconditionally, so one failing test cannot leave the clock frozen for the
-// rest of the file.
 afterEach(() => {
-    vi.useRealTimers();
     vi.restoreAllMocks();
 });
 
 describe('interpreting a dream', () => {
+    // There was a five second ad gate here. Interpretation now starts on the
+    // click, which is what the button has always claimed to do.
+    it('asks for the interpretation immediately', async () => {
+        await submit();
+        expect(interpretDream).toHaveBeenCalledOnce();
+    });
+
     it('saves the interpretation and the image, then opens the dream', async () => {
         await submit();
 
@@ -166,9 +146,6 @@ describe('when the interpretation fails', () => {
         expect(screen.getByRole('alert')).toHaveTextContent(/limit for ai requests/i);
     });
 
-    // Retrying has to actually succeed, not merely hide the message behind
-    // the ad gate — which is what a shallower assertion here would have
-    // measured, since the modal replaces the whole screen.
     it('recovers when the retry succeeds', async () => {
         interpretDream.mockRejectedValueOnce(new Error('network'));
 
@@ -176,11 +153,8 @@ describe('when the interpretation fails', () => {
         expect(screen.getByRole('alert')).toBeInTheDocument();
 
         fireEvent.click(screen.getByRole('button', { name: /interpret dream/i }));
-        for (let second = 0; second < 6; second++) {
-            await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
-        }
-        fireEvent.click(screen.getByRole('button', { name: /skip ad/i }));
-        await act(async () => { await vi.advanceTimersByTimeAsync(0); });
+        await act(async () => { await Promise.resolve(); });
+        await act(async () => { await Promise.resolve(); });
 
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();
         expect(onNavigate).toHaveBeenCalledWith('detail', 'new-dream');

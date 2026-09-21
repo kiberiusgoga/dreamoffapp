@@ -243,9 +243,9 @@ test.describe('writing a dream', () => {
         await page.getByPlaceholder(/describe your dream/i).fill('I was flying over a red ocean');
         await page.getByRole('button', { name: /interpret dream/i }).click();
 
-        // The ad gate comes first.
-        await expect(page.getByText(/advertisement/i)).toBeVisible();
-        await page.getByRole('button', { name: /skip ad/i }).click({ timeout: 15_000 });
+        // Nothing stands between the click and the request: the five second
+        // rewarded-video gate is gone, so there is no "Skip Ad" to wait for.
+        await expect(page.getByText(/skip ad/i)).toBeHidden();
 
         // The reason the server actually gave, inline and styled, rather than
         // a generic "Failed to process dream." in a browser dialog.

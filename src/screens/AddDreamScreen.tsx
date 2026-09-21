@@ -7,7 +7,6 @@ import { interpretDream } from '../services/interpretationAgent';
 import { generateDreamImage } from '../services/imageAgent';
 import { useDreamStore } from '../hooks/useDreamStore';
 import { errorMessage } from '../types/index';
-import VideoAdModal from '../components/VideoAdModal';
 
 const MODELS = [
     { id: 'jung', name: 'Jungian Archetypes' },
@@ -39,7 +38,6 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
     const [isRecording, setIsRecording] = useState(false);
     const [selectedModel, setSelectedModel] = useState('jung');
     const [isProcessing, setIsProcessing] = useState(false);
-    const [showAd, setShowAd] = useState(false);
     const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false); // State for custom dropdown
     const [error, setError] = useState('');
 
@@ -89,7 +87,6 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
         const dreamText = text.trim();
         if (!dreamText) return;
 
-        setShowAd(false);
         setError('');
         setIsProcessing(true);
 
@@ -133,10 +130,6 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
             setIsProcessing(false);
         }
     };
-
-    if (showAd) {
-        return <VideoAdModal onComplete={handleInterpret} />;
-    }
 
     if (isProcessing) {
         return (
@@ -193,7 +186,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
                 <div className="flex-1 min-h-[300px] flex flex-col">
                     <Card className="flex-1 flex flex-col animate-fade-in">
                         <textarea
-                            className="w-full h-full bg-transparent border-none resize-none focus:ring-0 text-lg placeholder-gray-600 font-serif p-2 min-h-full"
+                            className="w-full h-full bg-transparent border-none resize-none focus:ring-0 text-lg placeholder-muted font-serif p-2 min-h-full"
                             placeholder={language === 'mk' ? "Опишете го вашиот сон..." : "Describe your dream here..."}
                             value={text}
                             onChange={(e) => setText(e.target.value)}
@@ -205,7 +198,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
 
             {/* Models Selector - CUSTOM DROPDOWN */}
             <div className="space-y-2 relative z-40">
-                <label className="text-xs text-gray-500 uppercase tracking-widest pl-1 font-bold">
+                <label className="text-xs text-muted uppercase tracking-widest pl-1 font-bold">
                     {language === 'mk' ? 'Модел на Толкување' : 'Interpretation Model'}
                 </label>
 
@@ -251,7 +244,7 @@ export default function AddDreamScreen({ onNavigate, initialMode = 'write' }: { 
             )}
 
             {/* Submit Button - Available in Both Modes */}
-            <Button onClick={() => setShowAd(true)} disabled={!text} variant="action" className="w-full py-4 text-lg shadow-lg">
+            <Button onClick={handleInterpret} disabled={!text} variant="action" className="w-full py-4 text-lg shadow-lg">
                 {language === 'mk' ? 'Толкувај' : 'Interpret Dream'} <Send className="w-5 h-5 ml-2" />
             </Button>
         </div>

@@ -22,6 +22,12 @@ export default {
                 // small text it carries.
                 danger: "#E0796B",
 
+                // The dimmest text colour that still clears WCAG AA on every
+                // surface this app paints: 4.91:1 on authSurface, which is the
+                // tightest of them. Tailwind's gray-500 through gray-700 were
+                // used for the same job and reached 3.95, 2.52 and 1.85.
+                muted: "#818997",
+
                 // Surfaces the auth screen used to hardcode.
                 authSurface: "#161b22",
                 authSurfaceDeep: "#0d1117",

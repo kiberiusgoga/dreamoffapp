@@ -32,7 +32,7 @@ function LoadingScreen() {
         <div className="h-screen w-full flex items-center justify-center bg-background">
             <div className="flex flex-col items-center gap-4">
                 <div className="w-10 h-10 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
-                <p className="text-gray-500 text-sm font-serif tracking-wide">Loading...</p>
+                <p className="text-muted text-sm font-serif tracking-wide">Loading...</p>
             </div>
         </div>
     );
@@ -49,7 +49,7 @@ function NavIcon({ icon: Icon, label, screen, active, onSelect }: {
         <button
             onClick={() => onSelect(screen)}
             aria-current={active ? 'page' : undefined}
-            className={`flex flex-col items-center justify-center w-16 h-16 transition-colors ${active ? 'text-primary' : 'text-gray-600'}`}
+            className={`flex flex-col items-center justify-center w-16 h-16 transition-colors ${active ? 'text-primary' : 'text-muted'}`}
         >
             <Icon className={`w-6 h-6 ${active ? 'drop-shadow-[0_0_8px_rgba(233,216,166,0.6)]' : ''}`} />
             <span className="text-[10px] mt-1 font-sans">{label}</span>
