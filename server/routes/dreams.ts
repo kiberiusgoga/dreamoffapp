@@ -27,7 +27,14 @@ router.get('/', async (req: any, res: Response): Promise<any> => {
             lucid: d.lucid || false,
             themes: d.themes || [],
             mood: d.mood || '',
-            chatHistory: d.chatHistory || []
+            chatHistory: d.chatHistory || [],
+            text: d.get('text') || d.content || '',
+            model: d.get('model'),
+            layout: d.get('layout'),
+            language: d.get('language'),
+            transcription: d.get('transcription'),
+            interpretation: d.get('interpretation'),
+            imageUrl: d.get('imageUrl')
         }));
         
         res.json(formattedDreams);
@@ -56,7 +63,14 @@ router.post('/', async (req: any, res: Response): Promise<any> => {
             lucid: newDream.lucid || false,
             themes: newDream.themes || [],
             mood: newDream.mood || '',
-            chatHistory: newDream.chatHistory || []
+            chatHistory: newDream.chatHistory || [],
+            text: newDream.get('text') || newDream.content || '',
+            model: newDream.get('model'),
+            layout: newDream.get('layout'),
+            language: newDream.get('language'),
+            transcription: newDream.get('transcription'),
+            interpretation: newDream.get('interpretation'),
+            imageUrl: newDream.get('imageUrl')
         });
     } catch (err) {
         console.error('Add dream error:', err);

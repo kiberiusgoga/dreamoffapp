@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:server": "cd server && npm run dev",
     "build": "vite build",
-    "start": "cd server && node server.js",
+    "start": "npm --prefix server start",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -129,3 +129,9 @@ server/db.json
 # Vite
 dist-ssr/
 *.local
+
+# Generated builds, database contents, and old project archives
+dist/
+*.sqlite
+*.sqlite-*
+package*.zip

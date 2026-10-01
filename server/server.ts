@@ -22,7 +22,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 app.use(cors(isProduction ? { origin: false } : {}));
 
 // Parse JSON bodies
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // ── API Routes ──
 app.use('/api/auth', authRoutes);

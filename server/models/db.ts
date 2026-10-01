@@ -1,9 +1,11 @@
 import { Sequelize } from 'sequelize';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { mkdirSync } from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dbPath = join(__dirname, '..', '..', 'database.sqlite'); // Store in project root
+const dbPath = process.env.DATABASE_PATH || join(__dirname, '..', '..', 'database.sqlite');
+mkdirSync(dirname(dbPath), { recursive: true });
 
 const sequelize = new Sequelize({
   dialect: 'sqlite',

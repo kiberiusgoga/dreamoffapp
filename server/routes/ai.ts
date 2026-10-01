@@ -15,7 +15,7 @@ router.post('/interpret', authenticateToken, async (req: any, res: any) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const generativeModel = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-flash' });
         
         const langString = language === 'mk' ? 'Macedonian' : 'English';
         const prompt = `You are a professional dream analyst and psychologist.
@@ -70,7 +70,7 @@ router.post('/image', authenticateToken, async (req: any, res: any) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const generativeModel = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-flash' });
         const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
 
         // 1. Generate an optimized image generation prompt from the dream text
@@ -79,6 +79,7 @@ router.post('/image', authenticateToken, async (req: any, res: any) => {
 
         // 2. Request the image from Hugging Face
         const imageBlob = await hf.textToImage({
+            provider: 'fal-ai',
             model: 'stabilityai/stable-diffusion-xl-base-1.0',
             inputs: imagePrompt,
             parameters: { negative_prompt: "blurry, poor quality, text, words, watermark, ugly" }
